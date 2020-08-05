@@ -1,5 +1,6 @@
+import sympy
+from sympy import sympify
 class Expr:
-
     def __init__(self):
 
         pass
@@ -86,6 +87,7 @@ class Subtract(Expr):
         return SubtractExpr(
 
             self._lhs_expr.differentiate(),
+
 
             self._rhs_expr.differentiate()
 
@@ -198,4 +200,4 @@ def differentiate(expr):
 
 
 a = eval(input("Enter: "))
-print(differentiate(a).pretty())
+print(sympify(differentiate(a).pretty()))
