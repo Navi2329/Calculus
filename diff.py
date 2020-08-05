@@ -189,6 +189,14 @@ class PowerExpr(Expr):
     def pretty(self):
 
       return 'x^' + str(self._power)
+class sin(Expr):
+    def __init__(self,lhsExpr):
+        self.lhsExpr=lhsExpr
+    def differentiate(self):
+        return sin(self.lhsExpr.differentiate())
+    def pretty(self):
+        return "cos ( " + self.lhsExpr.pretty() + " ) "
+    
 
        
 
@@ -200,4 +208,4 @@ def differentiate(expr):
 
 
 a = eval(input("Enter: "))
-print(sympify(differentiate(a).pretty()))
+print(differentiate(a).pretty())
