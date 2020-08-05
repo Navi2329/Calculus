@@ -1,6 +1,3 @@
-# division rule subtraction works
-import sympy
-from sympy import sympify
 class Expr:
 
     def __init__(self):
@@ -160,9 +157,9 @@ class DivExpr(Expr):
         self.denoExpr=denoExpr
     def differentiate(self):
         return(
-            Subtract(MulExpr(self.denoExpr,self.numExpr.differentiate()),(MulExpr((self.numExpr),self.denoExpr.differentiate()))))
+            DivExpr((Subtract(MulExpr(self.denoExpr,self.numExpr.differentiate()),(MulExpr((self.numExpr),self.denoExpr.differentiate())))),MulExpr(self.denoExpr,self.denoExpr)))
     def pretty(self):
-        pass
+        return '(' + self.numExpr.pretty() + ') / (' + self.denoExpr.pretty() + ')' 
 class PowerExpr(Expr):
 
     def __init__(self, power):
@@ -201,4 +198,4 @@ def differentiate(expr):
 
 
 a = eval(input("Enter: "))
-print(sympify(differentiate(a).pretty()))
+print(differentiate(a).pretty())
