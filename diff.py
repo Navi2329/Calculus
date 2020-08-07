@@ -189,13 +189,19 @@ class PowerExpr(Expr):
     def pretty(self):
 
       return 'x^' + str(self._power)
-class sin(Expr):
-    def __init__(self,lhsExpr):
-        self.lhsExpr=lhsExpr
+def comp(Expr):
+    def __init__(self,innerExpr,outerExpr):
+        self.innerExpr=innerExpr
+        self.outerExpr=outerExpr
     def differentiate(self):
-        return sin(self.lhsExpr.differentiate())
+        return comp(MulExpr(self.outerExpr.differentiate(),self.innerExpr.differentiate()))
     def pretty(self):
-        return "cos ( " + self.lhsExpr.pretty() + " ) "
+        "(" + self.outerExpr.pretty() + "(" + self.innerExpr + ")" + self.innerExpr.pretty() + ")"
+def sin(Expr):
+    def __init__(self,expr):
+        self.expr=expr
+    def differentiate(self):
+        return sin
     
 
        
