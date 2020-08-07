@@ -199,17 +199,13 @@ def comp(Expr):
         "(" + self.outerExpr.pretty() + "(" + self.innerExpr + ")" + self.innerExpr.pretty() + ")"
 def sin(Expr):
     def __init__(self,expr):
-        self.expr=expr
+       self.expr=expr
     def differentiate(self):
-        return sin
+        pass
     
-
-       
-
-
-
+        
+    
 def differentiate(expr):
-
     return expr.differentiate()
 
 
