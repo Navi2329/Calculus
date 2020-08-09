@@ -1,4 +1,3 @@
-import numpy
 import sympy
 from sympy import sympify
 class Expr:
@@ -191,21 +190,16 @@ class PowerExpr(Expr):
 
       return 'x^' + str(self._power)
 
-class exp(Expr):
-    def __init__(self,expr):
-        self.expr=expr
-    def differentiate(self):
-        return exp(self.expr.differentiate())
-    def pretty(self):
-        return self.expr.pretty()
-
 class comp(Expr):
-    def __init__(self,innerExpr):
+    def __init__(self,outerExpr,innerExpr):
         self.innerExpr=innerExpr
+        self.outerExpr=outerExpr
     def differentiate(self):
-        return comp(self.innerExpr.differentiate())
+        return MulExpr(comp(self.outerExpr.differentiate(),self.innerExpr),self.innerExpr.differentiate())
     def pretty(self):
-        return "(" + self.innerExpr.pretty() + ")"
+        return "(" + self.outerExpr.pretty() + "(" + self.innerExpr.pretty() + "))"
+    def simplify(self):
+        return self
     
 class sin(Expr):
     def __init__(self):
@@ -213,16 +207,56 @@ class sin(Expr):
     def differentiate(self):
         return cos()
     def pretty(self):
-        return "sin(" + self.expr.pretty() + ")"
+        return "sin"
 class cos(Expr):
     def __init__(self):
         pass
     def differentiate(self):
-        return sin()
+        return MulExpr(ConstExpr(-1),sin())
     def pretty(self):
-        return "cos(" + self.expr.pretty() + ")"
+        return "cos"
+    def simplify(self):
+        return self
+class tan(Expr):
+    def __init__(self):
+        pass
+    def differentiate(self):
+        return MulExpr(sec(),sec())
+    def pretty(self):
+        return "tan"
+class sec(Expr):
+    def __init__(self):
+        pass
+    def differentiate(self):
+        return MulExpr(sec(),tan())
+    def pretty(self):
+        return "sec"
+    def simplify(self):
+        pass
+class cosec(self):
+    def __init__(self):
+        pass
+    def differentiate(self):
+        return MulExpr(ConstExpr(-1),MulExpr(cosec(),cot()))
+    def pretty(self):
+        return "cosec"
+    def simplify(self):
+        pass
+class cot(self):
+    def __init__(self):
+        pass
+    def differentiate(self):
+        return MulExpr(ConstExpr(-1),MulExpr(cosec(),cosec()))
+    def pretty(self):
+        return "cot"
+    def simplify(self):
+        pass
+def evaluate(expr):
+    print(sympify(differentiate(expr).pretty()))
+    print(differentiate(expr).simplify().pretty())
 
 def differentiate(Expr):
     return Expr.differentiate()
-a = eval(input("Enter: "))
-print(sympify(differentiate(a).pretty()))
+
+
+
