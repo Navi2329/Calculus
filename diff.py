@@ -1,3 +1,4 @@
+import numpy
 import sympy
 from sympy import sympify
 class Expr:
@@ -189,25 +190,39 @@ class PowerExpr(Expr):
     def pretty(self):
 
       return 'x^' + str(self._power)
-def comp(Expr):
-    def __init__(self,innerExpr,outerExpr):
-        self.innerExpr=innerExpr
-        self.outerExpr=outerExpr
-    def differentiate(self):
-        return comp(MulExpr(self.outerExpr.differentiate(),self.innerExpr.differentiate()))
-    def pretty(self):
-        "(" + self.outerExpr.pretty() + "(" + self.innerExpr + ")" + self.innerExpr.pretty() + ")"
-def sin(Expr):
+
+class exp(Expr):
     def __init__(self,expr):
-       self.expr=expr
+        self.expr=expr
     def differentiate(self):
+        return exp(self.expr.differentiate())
+    def pretty(self):
+        return self.expr.pretty()
+
+class comp(Expr):
+    def __init__(self,innerExpr):
+        self.innerExpr=innerExpr
+    def differentiate(self):
+        return comp(self.innerExpr.differentiate())
+    def pretty(self):
+        return "(" + self.innerExpr.pretty() + ")"
+    
+class sin(Expr):
+    def __init__(self):
         pass
-    
-        
-    
-def differentiate(expr):
-    return expr.differentiate()
+    def differentiate(self):
+        return cos()
+    def pretty(self):
+        return "sin(" + self.expr.pretty() + ")"
+class cos(Expr):
+    def __init__(self):
+        pass
+    def differentiate(self):
+        return sin()
+    def pretty(self):
+        return "cos(" + self.expr.pretty() + ")"
 
-
+def differentiate(Expr):
+    return Expr.differentiate()
 a = eval(input("Enter: "))
-print(differentiate(a).pretty())
+print(sympify(differentiate(a).pretty()))
