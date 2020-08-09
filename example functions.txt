@@ -1,0 +1,3 @@
+AddExpr(MulExpr(ConstExpr(3),PowerExpr(2)),MulExpr(ConstExpr(2),PowerExpr(3)))
+AddExpr(AddExpr(MulExpr(ConstExpr(3),PowerExpr(2)),MulExpr(ConstExpr(2),PowerExpr(3))),AddExpr(MulExpr(ConstExpr(4),PowerExpr(5)),MulExpr(ConstExpr(-1),PowerExpr(9))))
+DivExpr(MulExpr(ConstExpr(2),PowerExpr(3)),MulExpr(ConstExpr(2),PowerExpr(3)))
