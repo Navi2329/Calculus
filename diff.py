@@ -1,5 +1,5 @@
 import sympy
-from sympy import sympify
+from sympy import *
 class Expr:
     def __init__(self):
 
@@ -189,6 +189,12 @@ class PowerExpr(Expr):
     def pretty(self):
 
       return 'x^' + str(self._power)
+'''class sqExpr(Expr):
+    def __init__(self,baseExpr):
+        self.baseExpr=baseExpr
+    def differentiate(self):
+        return '''
+    
 
 class comp(Expr):
     def __init__(self,outerExpr,innerExpr):
@@ -200,7 +206,21 @@ class comp(Expr):
         return "(" + self.outerExpr.pretty() + "(" + self.innerExpr.pretty() + "))"
     def simplify(self):
         return self
-    
+
+class log(Expr):
+    def __init__(self,expr):
+        self.expr=expr
+    def differentiate(self):
+        return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),self.expr))
+    def pretty(self):
+        return 'log()'+self.expr.pretty()+')'
+class exp(Expr):
+    def __init__(self,expr):
+        self.expr=expr
+    def differentiate(self):
+        return MulExpr(self.expr.differentiate(),exp(self.expr))
+    def pretty(self):
+        return 'exp('+self.expr.pretty()+')'
 class sin(Expr):
     def __init__(self):
         pass
@@ -217,7 +237,7 @@ class cos(Expr):
         return "cos"
     def simplify(self):
         return self
-class tan(Expr):
+'''class tan(Expr):
     def __init__(self):
         pass
     def differentiate(self):
@@ -233,7 +253,7 @@ class sec(Expr):
         return "sec"
     def simplify(self):
         pass
-class cosec(self):
+class cosec(Expr):
     def __init__(self):
         pass
     def differentiate(self):
@@ -242,7 +262,7 @@ class cosec(self):
         return "cosec"
     def simplify(self):
         pass
-class cot(self):
+class cot(Expr):
     def __init__(self):
         pass
     def differentiate(self):
@@ -250,11 +270,9 @@ class cot(self):
     def pretty(self):
         return "cot"
     def simplify(self):
-        pass
+        pass'''
 def evaluate(expr):
-    print(sympify(differentiate(expr).pretty()))
-    print(differentiate(expr).simplify().pretty())
-
+    print(simplify(differentiate(expr).pretty()))
 def differentiate(Expr):
     return Expr.differentiate()
 
