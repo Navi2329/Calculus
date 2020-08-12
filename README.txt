@@ -5,3 +5,4 @@ Python Code to find derivative of a function
 *There is a need to give evaluate in front of every input
 *comp is not required for log and exp functions
 *sympify() function is replaced with simplify() function
+*{tan(),sec(),cosec(),cot() still wont work}
