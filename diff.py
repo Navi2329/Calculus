@@ -271,7 +271,7 @@ class cot(Expr):
         return "cot"
     def simplify(self):
         pass'''
-def evaluate(expr):
+def diff(expr):
     print(simplify(differentiate(expr).pretty()))
 def differentiate(Expr):
     return Expr.differentiate()
