@@ -273,9 +273,7 @@ class cot(Expr):
     def simplify(self):
         return self
 def diff(expr):
-    print(simplify(differentiate(expr).pretty()))
+    a=(simplify(differentiate(expr).pretty()))
+    print(a)
 def differentiate(Expr):
     return Expr.differentiate()
-
-
-
