@@ -187,8 +187,15 @@ class PowerExpr(Expr):
        
 
     def pretty(self):
-
-      return 'x^' + str(self._power)
+        return 'x^' + str(self._power)
+class sqrt(Expr):
+    def __init__(self,expr):
+        self.expr=expr
+    def  pretty(self):
+        return '('+self.expr.pretty()+'**(1/2))'
+    def simplify(self):
+        return self
+    
 
 
 class comp(Expr):
@@ -196,11 +203,12 @@ class comp(Expr):
         self.innerExpr=innerExpr
         self.outerExpr=outerExpr
     def differentiate(self):
-        return MulExpr(comp(self.outerExpr.differentiate(),self.innerExpr),self.innerExpr.differentiate())
+        return MulExpr(comp(self.outerExpr.differentiate(),self.idefnnerExpr),self.innerExpr.differentiate())
     def pretty(self):
         return "(" + self.outerExpr.pretty() + "(" + self.innerExpr.pretty() + "))"
     def simplify(self):
         return self
+    
 class mod(Expr):
     def __init__(self,expr):
         self.expr=expr
@@ -274,28 +282,35 @@ class cot(Expr):
         return "cot("+self.expr.pretty()+")"
     def simplify(self):
         return self
-'''class arcsin(Expr):
+class arcsin(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
-        return DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))
+        return MulExpr(self.expr.differentiate(),sqrt(DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))))
     def pretty(self):
         return 'arcsin(',+self.expr.pretty()+')'
 class arccos(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
-        return DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))
+        return MulExpr(self.expr.differentiate(),sqrt(DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))))
     def pretty(self):
-        return 'arcsin(',+self.expr.pretty()+")"'''
-    
+        return 'arccos(',+self.expr.pretty()+')'    
 class arctan(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),AddExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))
     def pretty(self):
-        return 'arcsin(',+self.expr.pretty()+')'
+        return 'arctan(',+self.expr.pretty()+')'
+class arccot(Expr):
+    def __init__(self,expr):
+        self.expr=expr
+    def differentiate(self):
+        return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),AddExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))
+    def pretty(self):
+        return 'arccot(',+self.expr.pretty()+')'
+
 
 def diff(expr):
     print(sympify(differentiate(expr).pretty()))
