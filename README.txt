@@ -6,5 +6,7 @@ Python Code to find derivative of a function
 *comp is not required for log and exp functions
 *sympify() function is replaced with simplify() function
 *All trignometric fucntions will work perfrctly
+*modulus function added
+*tan inverse function added
 
 
