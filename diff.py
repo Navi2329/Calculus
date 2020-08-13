@@ -74,7 +74,7 @@ class AddExpr(Expr):
 
         return '(' + self._lhs_expr.pretty() + ') + (' +  self._rhs_expr.pretty() + ')'
 
-class Subtract(Expr):
+class SubtractExpr(Expr):
 
     def __init__(self, lhs_expr, rhs_expr):
 
@@ -82,7 +82,7 @@ class Subtract(Expr):
 
         self._rhs_expr = rhs_expr
 
-    def Subtract(self):
+    def SubtractExpr(self):
 
         return SubtractExpr(
 
@@ -159,7 +159,7 @@ class DivExpr(Expr):
         self.denoExpr=denoExpr
     def differentiate(self):
         return(
-            DivExpr((Subtract(MulExpr(self.denoExpr,self.numExpr.differentiate()),(MulExpr((self.numExpr),self.denoExpr.differentiate())))),MulExpr(self.denoExpr,self.denoExpr)))
+            DivExpr((SubtractExpr(MulExpr(self.denoExpr,self.numExpr.differentiate()),(MulExpr((self.numExpr),self.denoExpr.differentiate())))),MulExpr(self.denoExpr,self.denoExpr)))
     def pretty(self):
         return '(' + self.numExpr.pretty() + ') / (' + self.denoExpr.pretty() + ')' 
 class PowerExpr(Expr):
@@ -189,12 +189,7 @@ class PowerExpr(Expr):
     def pretty(self):
 
       return 'x^' + str(self._power)
-'''class sqExpr(Expr):
-    def __init__(self,baseExpr):
-        self.baseExpr=baseExpr
-    def differentiate(self):
-        return '''
-    
+
 
 class comp(Expr):
     def __init__(self,outerExpr,innerExpr):
@@ -206,6 +201,13 @@ class comp(Expr):
         return "(" + self.outerExpr.pretty() + "(" + self.innerExpr.pretty() + "))"
     def simplify(self):
         return self
+class mod(Expr):
+    def __init__(self,expr):
+        self.expr=expr
+    def differentiate(self):
+        return MulExpr(self.expr.differentiate(),DivExpr(self.expr,mod(self.expr)))
+    def pretty(self):
+        return 'mod('+self.expr.pretty()+')'
 
 class log(Expr):
     def __init__(self,expr):
@@ -220,7 +222,7 @@ class exp(Expr):
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),exp(self.expr))
     def pretty(self):
-        return 'exp('+self.expr.pretty()+')'
+        return 'e**('+self.expr.pretty()+')'
 class sin(Expr):
     def __init__(self,expr):
         self.expr=expr
@@ -272,7 +274,31 @@ class cot(Expr):
         return "cot("+self.expr.pretty()+")"
     def simplify(self):
         return self
+'''class arcsin(Expr):
+    def __init__(self,expr):
+        self.expr=expr
+    def differentiate(self):
+        return DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))
+    def pretty(self):
+        return 'arcsin(',+self.expr.pretty()+')'
+class arccos(Expr):
+    def __init__(self,expr):
+        self.expr=expr
+    def differentiate(self):
+        return DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))
+    def pretty(self):
+        return 'arcsin(',+self.expr.pretty()+")"'''
+    
+class arctan(Expr):
+    def __init__(self,expr):
+        self.expr=expr
+    def differentiate(self):
+        return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),AddExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))
+    def pretty(self):
+        return 'arcsin(',+self.expr.pretty()+')'
+
 def diff(expr):
-    print(simplify(differentiate(expr).pretty()))
+    print(sympify(differentiate(expr).pretty()))
+    
 def differentiate(Expr):
     return Expr.differentiate()
