@@ -13,3 +13,4 @@ diff(tan(AddExpr(MulExpr(ConstExpr(2),PowerExpr(5)),MulExpr(ConstExpr(1),PowerEx
 diff(sec(AddExpr(MulExpr(ConstExpr(2),PowerExpr(1)),MulExpr(ConstExpr(1),PowerExpr(4)))))
 diff(cosec(AddExpr(MulExpr(ConstExpr(2),PowerExpr(3)),MulExpr(ConstExpr(1),PowerExpr(4)))))
 diff(cot(AddExpr(MulExpr(ConstExpr(2),PowerExpr(3)),MulExpr(ConstExpr(1),PowerExpr(4)))))
+diff(mod(MulExpr(ConstExpr(2),PowerExpr(3))))
