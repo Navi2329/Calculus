@@ -1,4 +1,6 @@
 import sympy
+import math
+from math import *
 from sympy import *
 class Expr:
     def __init__(self):
@@ -192,7 +194,7 @@ class sqrt(Expr):
     def __init__(self,expr):
         self.expr=expr
     def  pretty(self):
-        return '('+self.expr.pretty()+'**(1/2))'
+        return '('+self.expr.pretty()+')**(1/2)'
     def simplify(self):
         return self
     
@@ -286,14 +288,15 @@ class arcsin(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
-        return MulExpr(self.expr.differentiate(),sqrt(DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))))
+        return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))))
     def pretty(self):
-        return 'arcsin(',+self.expr.pretty()+')'
+        return 'arcsin(',+self.expr.pretty()+')'    
+
 class arccos(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
-        return MulExpr(self.expr.differentiate(),sqrt(DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))))
+        return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))))
     def pretty(self):
         return 'arccos(',+self.expr.pretty()+')'    
 class arctan(Expr):
@@ -310,10 +313,30 @@ class arccot(Expr):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),AddExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))
     def pretty(self):
         return 'arccot(',+self.expr.pretty()+')'
+class arcsec(Expr):
+    def __init__(self,expr):
+        self.expr=expr
+    def differentiate(self):
+        return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(mod(self.expr),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))))
+    def pretty(self):
+        return 'arcsec(',+self.expr.pretty()+')'
+class arccosec(Expr):
+    def __init__(self,expr):
+        self.expr=expr
+    def differentiate(self):
+        return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),MulExpr(mod(self.expr),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))))
+    def pretty(self):
+        return 'arccosec(',+self.expr.pretty()+')'
 
 
 def diff(expr):
+    a=sympify(differentiate(expr).pretty())
     print(sympify(differentiate(expr).pretty()))
+    q=input('enter x')
+    b=str(a).replace('x',q)
+    print(N(b))
     
 def differentiate(Expr):
     return Expr.differentiate()
+
+    
