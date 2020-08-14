@@ -8,5 +8,9 @@ Python Code to find derivative of a function
 *All trignometric fucntions will work perfrctly
 *modulus function added
 *tan inverse function added
-
+#14/08/20
+*All inverse functions are added
+*Derivative at a point can be calculated
+*there is no method to control the range of deriavtive
+*The PROGRAM MAY RETURN IMAGINARY VALUES FOR DERIVATIVES AT A POINT
 
