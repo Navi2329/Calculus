@@ -197,7 +197,16 @@ class sqrt(Expr):
         return '('+self.expr.pretty()+')**(1/2)'
     def simplify(self):
         return self
-    
+class power1(Expr):
+    def __init__(self,expr,power):
+        self.expr=expr
+        self.power=power
+    def differentiate(self):
+        return MulExpr(power1(self.expr,self.power),AddExpr(MulExpr(self.power.differentiate(),log(self.expr)),MulExpr(DivExpr(self.expr.differentiate(),self.expr),self.power)))
+    def pretty(self):
+        return '('+self.expr.pretty()+')**'+self.power.pretty()
+    def simplify(self):
+        pass
 
 
 class comp(Expr):
@@ -225,7 +234,7 @@ class log(Expr):
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),self.expr))
     def pretty(self):
-        return 'log()'+self.expr.pretty()+')'
+        return 'log('+self.expr.pretty()+')'
 class exp(Expr):
     def __init__(self,expr):
         self.expr=expr
@@ -333,7 +342,8 @@ def diff(expr):
     a=sympify(differentiate(expr).pretty())
     print(sympify(differentiate(expr).pretty()))
     q=input('enter x')
-    b=str(a).replace('x',q)
+    b=str(a).replace('x','('+q+')')
+    print(b)
     print(N(b))
     
 def differentiate(Expr):
