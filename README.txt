@@ -13,4 +13,8 @@ Python Code to find derivative of a function
 *Derivative at a point can be calculated
 *there is no method to control the range of deriavtive
 *The PROGRAM MAY RETURN IMAGINARY VALUES FOR DERIVATIVES AT A POINT
+#18/08/20
+*ALL TYPES OF FUNCTIONS ARE DONE
+**CODE FOR FUNCTIONS TO THE POWER IS COMPLETED
+
 
