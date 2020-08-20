@@ -1,0 +1,115 @@
+# Expr:
+#     AtomicExpr
+#     AddExpr
+#     SubExpr
+#     MulExpr
+#     DivExpr
+#     LogExpr
+#     SinExpr
+#     CosExpr
+#     TanExpr
+    
+# AtomicExpr: '(' Expr ')'
+
+# AddExpr: AtomicExpr '+' AtomicExpr (similarly sub, mul, div)
+
+# LogExpr: 'log' + AtomicExpr (similarly Sin, Cos, Tan)
+
+
+
+# write a matcher for each expression you have defined.
+
+# example:
+    
+class Expr:
+    ...
+    @staticmethod
+    def match(expr):
+        classes = [
+            AddExpr,
+            SubExpr,
+            MulExpr,
+            DivExpr,
+            LogExpr,
+            SinExpr,
+            CosExpr,
+            TanExpr,
+            AtomicExpr,
+        ]
+        for klass in classes:
+            exp = klass.match(expr):
+            if exp is not None:
+                return exp
+        return None
+        
+class AtomicExpr(Expr):
+    
+    ...
+    @staticmethod
+    def match(expr):
+        if expr[0] == '(' and expr [len(expr)-1] == ')':
+            exp = Expr.match(expr[1:len(expr)-3])
+            return exp
+        return None
+
+def match_for_binary_exp(expr, klass, op):
+    atom_expr = None
+    expr_length = 0
+    for i in range(len(expr), 1, -1):
+        atom_expr = AtomicExpr.match(expr[0:i])
+        if atom_expr is not None
+            expr_length = i
+            break
+    if atom_expr is None:
+        return None
+    if expr[i] != op
+        return None
+    second_atom_expr = AtomicExpr.match(expr[i+1:])
+    if second_atom_expr is None:
+        return None
+    return klass(atom_expr, second_atom_expr)
+
+# Similarly for all other operators.
+class AddExpr(Expr):
+    
+    ....
+    @staticmethod
+    def match(expr):
+        return match_for_binary_exp(expr, AddExpr, '+')
+        
+        
+def Log(Expr):
+    
+    ...
+    @staticmethod
+    def match(expr):
+        if expr[0:3] != 'log':
+            return None
+        exp = AtomicExpr.match(expr[3:])
+        if exp is None:
+            return None
+        return Log(exp)
+
+def match_composite(expr, klass, comp):
+    if expr[0:len(comp)] != comp:
+        return None
+    exp = AtomicExpr.match(expr[len(comp):])
+    if exp is None:
+        return None
+    return Composite(klass(), exp)
+
+def Sin(Expr):
+    
+    ...
+    @staticmethod
+    def match(expr):
+        return match_composite(expr, Sin, "sin")
+        if expr[0:3] != 'log':
+            return None
+        exp = AtomicExpr.match(expr[3:])
+        if exp is None:
+            return None
+        return Log(exp)
+    
+
+# Finally call Expr.match(expression_string) to get to your object.
