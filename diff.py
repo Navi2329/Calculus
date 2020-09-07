@@ -1,7 +1,31 @@
-import sympy
 import math
 from math import *
 from sympy import *
+
+
+
+def match_for_binary_exp(expr, klass, op):
+    atom_expr = None
+    expr_length = 0
+    if len(expr) < 3:
+        return None
+    for i in range(len(expr), 1, -1):
+        atom_expr = AtomicExpr.match(expr[0:i])
+        if atom_expr is not None:
+            expr_length = i
+            break
+
+    if atom_expr is None:
+        return None
+    if expr[expr_length] != op:
+        return None
+    second_atom_expr = AtomicExpr.match(expr[expr_length+1:])
+    if second_atom_expr is None:
+        return None
+    return klass(atom_expr, second_atom_expr)
+  
+  
+   
 class Expr:
     def __init__(self):
 
@@ -14,7 +38,47 @@ class Expr:
     def is_zero(self):
 
         return isinstance(self, ConstExpr) and self._const == 0
+      
+    @staticmethod
+    def match(expr):
+        classes = [
+            AddExpr,
+            SubtractExpr,
+            MulExpr,
+            DivExpr,
+            log,
+            sin,
+            cos,
+            tan,
+            cot,
+            cosec,
+            sec,
+          	arcsin,
+          	arccos,
+          	arctan,
+            arccot,
+            arcsec,
+            arccosec,
+            power1,
+            AtomicExpr,
+          	PowerExpr,
+          	ConstExpr,
+        ]
+        for klass in classes:
+            exp = klass.match(expr)
+            if exp is not None:
+                return exp
+        return None
 
+class AtomicExpr(Expr):
+    @staticmethod
+    def match(expr):
+        if len(expr) < 3:
+            return None
+        if expr[0] == '(' and expr [len(expr)-1] == ')':
+            exp = Expr.match(expr[1:len(expr)-1])
+            return exp
+        return None
 
 
 class ConstExpr(Expr):
@@ -30,6 +94,14 @@ class ConstExpr(Expr):
     def pretty(self):
 
         return str(self._const)
+      
+    @staticmethod
+    def match(expr):
+      try:
+        value = int(expr)
+      except:
+        return None
+      return ConstExpr(value)
 
     def simplify(self):
 
@@ -71,6 +143,10 @@ class AddExpr(Expr):
             return self._lhs_expr
 
         return self
+      
+    @staticmethod
+    def match(expr):
+        return match_for_binary_exp(expr, AddExpr, '+')
 
     def pretty(self):
 
@@ -94,6 +170,10 @@ class SubtractExpr(Expr):
             self._rhs_expr.differentiate()
 
         )
+      
+    @staticmethod
+    def match(expr):
+        return match_for_binary_exp(expr, SubtractExpr, '-')
 
 
     def simplify(self):
@@ -134,6 +214,10 @@ class MulExpr(Expr):
             MulExpr(self._rhs_expr.differentiate(), self._lhs_expr)
 
         )
+    
+    @staticmethod
+    def match(expr):
+        return match_for_binary_exp(expr, MulExpr, '*')
 
     def simplify(self):
 
@@ -162,6 +246,11 @@ class DivExpr(Expr):
     def differentiate(self):
         return(
             DivExpr((SubtractExpr(MulExpr(self.denoExpr,self.numExpr.differentiate()),(MulExpr((self.numExpr),self.denoExpr.differentiate())))),MulExpr(self.denoExpr,self.denoExpr)))
+    
+    @staticmethod
+    def match(expr):
+        return match_for_binary_exp(expr, DivExpr, '/')
+      
     def pretty(self):
         return '(' + self.numExpr.pretty() + ') / (' + self.denoExpr.pretty() + ')' 
 class PowerExpr(Expr):
@@ -176,7 +265,17 @@ class PowerExpr(Expr):
 
         return MulExpr(ConstExpr(self._power), PowerExpr(self._power-1))
 
-       
+    
+    @staticmethod
+    def match(expr):
+        if len(expr) >= 3 and expr[0] == 'x' and expr[1] == '^':
+          try:
+            const = int(expr[2:])
+            return PowerExpr(const)
+          except:
+             pass
+        elif expr == 'x':
+          return PowerExpr(1)
 
     def simplify(self):
 
@@ -186,10 +285,9 @@ class PowerExpr(Expr):
 
         return self
 
-       
-
     def pretty(self):
         return 'x^' + str(self._power)
+
 class sqrt(Expr):
     def __init__(self,expr):
         self.expr=expr
@@ -197,12 +295,16 @@ class sqrt(Expr):
         return '('+self.expr.pretty()+')**(1/2)'
     def simplify(self):
         return self
+
 class power1(Expr):
     def __init__(self,expr,power):
         self.expr=expr
         self.power=power
     def differentiate(self):
         return MulExpr(power1(self.expr,self.power),AddExpr(MulExpr(self.power.differentiate(),log(self.expr)),MulExpr(DivExpr(self.expr.differentiate(),self.expr),self.power)))
+    @staticmethod
+    def match(expr):
+        return match_for_binary_exp(expr, power1, '^')
     def pretty(self):
         return '('+self.expr.pretty()+')**'+self.power.pretty()
     def simplify(self):
@@ -219,7 +321,16 @@ class comp(Expr):
         return "(" + self.outerExpr.pretty() + "(" + self.innerExpr.pretty() + "))"
     def simplify(self):
         return self
-    
+
+def match_unary(expr, klass, comp):
+    if expr[0:len(comp)] != comp:
+        return None
+    exp = AtomicExpr.match(expr[len(comp):])
+    if exp is None:
+        return None
+    return klass(exp)
+
+  
 class mod(Expr):
     def __init__(self,expr):
         self.expr=expr
@@ -227,7 +338,15 @@ class mod(Expr):
         return MulExpr(self.expr.differentiate(),DivExpr(self.expr,mod(self.expr)))
     def pretty(self):
         return 'mod('+self.expr.pretty()+')'
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, mod, 'mod')
 
+      
+      
+      
+      
+      
 class log(Expr):
     def __init__(self,expr):
         self.expr=expr
@@ -235,6 +354,12 @@ class log(Expr):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),self.expr))
     def pretty(self):
         return 'log('+self.expr.pretty()+')'
+    def simplify(self):
+        return self
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, log, 'log')
+
 class exp(Expr):
     def __init__(self,expr):
         self.expr=expr
@@ -242,6 +367,7 @@ class exp(Expr):
         return MulExpr(self.expr.differentiate(),exp(self.expr))
     def pretty(self):
         return 'e**('+self.expr.pretty()+')'
+
 class sin(Expr):
     def __init__(self,expr):
         self.expr=expr
@@ -249,6 +375,10 @@ class sin(Expr):
         return MulExpr(self.expr.differentiate(),cos(self.expr))
     def pretty(self):
         return 'sin('+self.expr.pretty()+')'
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, sin, 'sin')
+
 class cos(Expr):
     def __init__(self,expr):
         self.expr=expr
@@ -258,6 +388,10 @@ class cos(Expr):
         return "cos("+self.expr.pretty()+")"
     def simplify(self):
         return self
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, cos, 'cos')
+      
 class tan(Expr):
     def __init__(self,expr):
         self.expr=expr
@@ -265,6 +399,9 @@ class tan(Expr):
         return MulExpr(self.expr.differentiate(),MulExpr(sec(self.expr),sec(self.expr)))
     def pretty(self):
         return "tan("+self.expr.pretty()+")"
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, tan, 'tan')
     
 class sec(Expr):
     def __init__(self,expr):
@@ -275,6 +412,9 @@ class sec(Expr):
         return "sec("+self.expr.pretty()+")"
     def simplify(self):
         return self
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, sec, 'sec')
 
 class cosec(Expr):
     def __init__(self,expr):
@@ -283,6 +423,9 @@ class cosec(Expr):
         return MulExpr(self.expr.differentiate(),MulExpr(ConstExpr(-1),MulExpr(cosec(self.expr),cot(self.expr))))
     def pretty(self):
         return "cosec("+self.expr.pretty()+")"
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, cosec, 'cosec')
         
 class cot(Expr):
     def __init__(self,expr):
@@ -293,13 +436,20 @@ class cot(Expr):
         return "cot("+self.expr.pretty()+")"
     def simplify(self):
         return self
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, cot, 'cot')
+
 class arcsin(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))))
     def pretty(self):
-        return 'arcsin(',+self.expr.pretty()+')'    
+        return 'arcsin('+self.expr.pretty()+')' 
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, arcsin, 'arcsin')
 
 class arccos(Expr):
     def __init__(self,expr):
@@ -307,35 +457,50 @@ class arccos(Expr):
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))))
     def pretty(self):
-        return 'arccos(',+self.expr.pretty()+')'    
+        return 'arccos('+self.expr.pretty()+')'  
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, arccos, 'arccos')
 class arctan(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),AddExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))
     def pretty(self):
-        return 'arctan(',+self.expr.pretty()+')'
+        return 'arctan('+self.expr.pretty()+')'
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, arctan, 'arctan')
 class arccot(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),AddExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))
     def pretty(self):
-        return 'arccot(',+self.expr.pretty()+')'
+        return 'arccot('+self.expr.pretty()+')'
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, arccot, 'arccot')
 class arcsec(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(mod(self.expr),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))))
     def pretty(self):
-        return 'arcsec(',+self.expr.pretty()+')'
+        return 'arcsec('+self.expr.pretty()+')'
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, arcsec, 'arcsec')
 class arccosec(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),MulExpr(mod(self.expr),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))))
     def pretty(self):
-        return 'arccosec(',+self.expr.pretty()+')'
+        return 'arccosec('+self.expr.pretty()+')'
+    @staticmethod
+    def match(expr):
+        return match_unary(expr, arccosec, 'arccosec')
 
 
 def diff(expr):
@@ -345,6 +510,18 @@ def diff(expr):
     b=str(a).replace('x','('+q+')')
     print(b)
     print(N(b))
+    
+    
+def parse_and_differentiate(expr_string):
+  input_expr = Expr.match(expr_string)
+  print(input_expr.pretty())
+  return input_expr.differentiate()
+
+def input_handler():
+  while True:
+    value = parse_and_differentiate(input())
+    print(sympify(value.pretty()))
+
     
 def differentiate(Expr):
     return Expr.differentiate()
