@@ -17,6 +17,6 @@ Python Code to find derivative of a function
 *ALL TYPES OF FUNCTIONS ARE DONE
 **CODE FOR FUNCTIONS TO THE POWER IS COMPLETED
 #6/09/20
-*Code for parsing was added fot all functions except exponential function.
+*Code for parsing was added for all functions except exponential function.
 
 
