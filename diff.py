@@ -1,6 +1,8 @@
 from fractions import Fraction
 from sympy import *
 from sympy.abc import x,y
+import math
+from math import *
 def match_for_binary_exp(expr, klass, op):
     atom_expr = None
     expr_length = 0
@@ -43,20 +45,21 @@ class Expr:
             SubtractExpr,
             MulExpr,
             DivExpr,
-            log,
+            ln,
             sin,
             cos,
             tan,
             cot,
             cosec,
             sec,
-          	arcsin,
-          	arccos,
-          	arctan,
-            arccot,
-            arcsec,
-            arccosec,
+          	asin,
+          	acos,
+          	atan,
+            acot,
+            asec,
+            acsc,
             power1,
+            e,
             AtomicExpr,
           	PowerExpr,
           	ConstExpr,
@@ -313,7 +316,7 @@ class power1(Expr):
         self.expr=expr
         self.power=power
     def differentiate(self):
-        return MulExpr(power1(self.expr,self.power),AddExpr(MulExpr(self.power.differentiate(),log(self.expr)),MulExpr(DivExpr(self.expr.differentiate(),self.expr),self.power)))
+        return MulExpr(power1(self.expr,self.power),AddExpr(MulExpr(self.power.differentiate(),ln(self.expr)),MulExpr(DivExpr(self.expr.differentiate(),self.expr),self.power)))
     @staticmethod
     def match(expr):
         return match_for_binary_exp(expr, power1, '^')
@@ -323,7 +326,7 @@ class power1(Expr):
         pass
 
 
-class comp(Expr):
+'''class comp(Expr):
     def __init__(self,outerExpr,innerExpr):
         self.innerExpr=innerExpr
         self.outerExpr=outerExpr
@@ -332,7 +335,7 @@ class comp(Expr):
     def pretty(self):
         return "(" + self.outerExpr.pretty() + "(" + self.innerExpr.pretty() + "))"
     def simplify(self):
-        return self
+        return self'''
 
 def match_unary(expr, klass, comp):
     if expr[0:len(comp)] != comp:
@@ -359,26 +362,29 @@ class mod(Expr):
       
       
       
-class log(Expr):
+class ln(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),self.expr))
     def pretty(self):
-        return 'log('+self.expr.pretty()+')'
+        return 'ln('+self.expr.pretty()+')'
     def simplify(self):
         return self
     @staticmethod
     def match(expr):
-        return match_unary(expr, log, 'log')
+        return match_unary(expr, ln, 'ln')
 
-class exp(Expr):
+class e(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
-        return MulExpr(self.expr.differentiate(),exp(self.expr))
+        return MulExpr(self.expr.differentiate(),e(self.expr))
     def pretty(self):
         return 'e**('+self.expr.pretty()+')'
+    @staticmethod
+    def match(expr):
+        return match_unary(expr,e,'e')
 
 class sin(Expr):
     def __init__(self,expr):
@@ -452,67 +458,67 @@ class cot(Expr):
     def match(expr):
         return match_unary(expr, cot, 'cot')
 
-class arcsin(Expr):
+class asin(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))))
     def pretty(self):
-        return 'arcsin('+self.expr.pretty()+')' 
+        return 'asin('+self.expr.pretty()+')' 
     @staticmethod
     def match(expr):
-        return match_unary(expr, arcsin, 'arcsin')
+        return match_unary(expr, asin, 'asin')
 
-class arccos(Expr):
+class acos(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr)))))
     def pretty(self):
-        return 'arccos('+self.expr.pretty()+')'  
+        return 'acos('+self.expr.pretty()+')'  
     @staticmethod
     def match(expr):
-        return match_unary(expr, arccos, 'arccos')
-class arctan(Expr):
+        return match_unary(expr, acos, 'acos')
+class atan(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),AddExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))
     def pretty(self):
-        return 'arctan('+self.expr.pretty()+')'
+        return 'atan('+self.expr.pretty()+')'
     @staticmethod
     def match(expr):
-        return match_unary(expr, arctan, 'arctan')
-class arccot(Expr):
+        return match_unary(expr, atan, 'atan')
+class acot(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),AddExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))
     def pretty(self):
-        return 'arccot('+self.expr.pretty()+')'
+        return 'acot('+self.expr.pretty()+')'
     @staticmethod
     def match(expr):
-        return match_unary(expr, arccot, 'arccot')
-class arcsec(Expr):
+        return match_unary(expr, acot, 'acot')
+class asec(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(mod(self.expr),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))))
     def pretty(self):
-        return 'arcsec('+self.expr.pretty()+')'
+        return 'asec('+self.expr.pretty()+')'
     @staticmethod
     def match(expr):
-        return match_unary(expr, arcsec, 'arcsec')
-class arccosec(Expr):
+        return match_unary(expr, asec, 'asec')
+class acsc(Expr):
     def __init__(self,expr):
         self.expr=expr
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(MulExpr(ConstExpr(-1),PowerExpr(0)),MulExpr(mod(self.expr),sqrt(SubtractExpr(MulExpr(ConstExpr(1),PowerExpr(0)),MulExpr(self.expr,self.expr))))))
     def pretty(self):
-        return 'arccosec('+self.expr.pretty()+')'
+        return 'acsc('+self.expr.pretty()+')'
     @staticmethod
     def match(expr):
-        return match_unary(expr, arccosec, 'arccosec')
+        return match_unary(expr, acsc, 'acsc')
 
 
 '''def diff(expr):
@@ -531,9 +537,9 @@ def parse_and_differentiate(expr_string):
 
 def input_handler():
     print('1)To find DERIVATIVE')
-    print('2)To find DERIVATIVE AT A POINT')
-    print('3)To find slope of tangent to the curve at a point')
-    print('4)To find slope of normal to the curve at a point')
+    print('2)To find slope of tangent to the curve at a point')
+    print('3)To find slope of normal to the curve at a point')
+    print('4)To find value of the function at a point')
     print('5)To find equation of tangent at a point on curve')
     print('6)To find equation of normal at a point on curve')
     print('7)To enter another function')
@@ -547,68 +553,91 @@ def input_handler():
         c=int(input('Enter choice'))
         if c in list:
             q=input('Enter x')
-            
-            if c==2:
-                b=str(a).replace('x','('+q+')')
-                print('DERIVATIVE OF CURVE AT x='+q+' is',N(b))
-            elif c==3:
-                b=str(a).replace('x','('+q+')')
-                print('SLOPE OF NORMAL TO CURVE AT x='+q+' is',-1/N(b))
-            elif c==4:
+            def defined():
                 b=str(ex).replace('x','('+q+')')
-                print('VALUE OF FUNCTION AT x='+q+' is',N(b))
-            elif c==5:
-                print('Equation of tangent at x='+q+' is')
-                m=N(str(a).replace('x','('+q+')'))
-                y=N(str(ex).replace('x','('+q+')'))
-                c=N(y-(m*int(q)))
-                m=Fraction(float(m))
-                c=Fraction(float(c))
-                if m==1:
-                    if c==0:
-                        eq='y=x'
-                    elif c>0:
-                        eq='y=x'+'+'+str(c)
-                    else:
-                        eq='y=x'+str(c)
+                if 'nan' in str(N(b)) or 'zoo' in str(N(b)) or 'I' in str(N(b)):
+                    return False
                 else:
-                    if c==0:
-                        eq='y='+str(m)+'x'
-                    elif c>0:
-                        eq='y='+str(m)+'x'+'+'+str(c)
-                    else:
-                        eq='y='+str(m)+'x'+str(c)
-                print(eq)
-            elif c==6:
-                print('Equation of normal at x='+q+' is')
-                m=N(str(a).replace('x','('+q+')'))
-                m=Fraction(-1,Fraction(float(m)))
-                y=N(str(ex).replace('x','('+q+')'))
-                c=N(y-(m*int(q)))
-                c=round(c,1)
-                if m==1:
-                    if c==0:
-                        eq='y=x'
-                    elif c>0:
-                        eq='y=x'+'+'+str(c)
-                    else:
-                        eq='y=x'+str(c)
+                    return True
+            def differentiable():
+                b=str(a).replace('x','('+q+')')
+                if 'nan' in str(N(b)) or 'zoo' in str(N(b)) or 'I' in str(N(b)):
+                    return False
                 else:
-                    if c==0:
-                        eq='y=('+str(m)+')x'
-                    elif c>0:
-                        eq='y=('+str(m)+')x'+'+'+str(c)
+                    return True
+            if defined()==False:
+                print('THE Function is not defined at x=',q)
+                input_handler()
+            else:
+                if c==4:
+                    b=str(ex).replace('x','('+q+')')
+                    print('VALUE OF FUNCTION AT x='+q+' is',N(b))
+                if c in [2,3,5,6]:
+                    if differentiable()==False:
+                        print('THE Function is not differentiable at x=',q)
+                        input_handler()
                     else:
-                        eq='y=('+str(m)+')x'+str(c)
-                print(eq)
+                        if c==2:
+                            b=str(a).replace('x','('+q+')')
+                            print('DERIVATIVE OF CURVE AT x='+q+' is',N(b))
+                        elif c==3:
+                            b=str(a).replace('x','('+q+')')
+                            print('SLOPE OF NORMAL TO CURVE AT x='+q+' is',-1/N(b))
+
+                        elif c==5:
+                            print('Equation of tangent at x='+q+' is')
+                            m=N(str(a).replace('x','('+q+')'))
+                            y=N(str(ex).replace('x','('+q+')'))
+                            c=N(y-(m*int(q)))
+                            m=Fraction(float(m))
+                            c=Fraction(float(c))
+                            if m==1:
+                                if c==0:
+                                    eq='y=x'
+                                elif c>0:
+                                    eq='y=x'+'+'+str(c)
+                                else:
+                                    eq='y=x'+str(c)
+                            else:
+                                if c==0:
+                                    eq='y='+str(m)+'x'
+                                elif c>0:
+                                    eq='y='+str(m)+'x'+'+'+str(c)
+                                else:
+                                    eq='y='+str(m)+'x'+str(c)
+                            print(eq)
+                        elif c==6:
+                            print('Equation of normal at x='+q+' is')
+                            m=N(str(a).replace('x','('+q+')'))
+                            m=Fraction(-1,Fraction(float(m)))
+                            y=N(str(ex).replace('x','('+q+')'))
+                            c=N(y-(m*int(q)))
+                            c=round(c,1)
+                            if m==1:
+                                if c==0:
+                                    eq='y=x'
+                                elif c>0:
+                                    eq='y=x'+'+'+str(c)
+                                else:
+                                    eq='y=x'+str(c)
+                            else:
+                                if c==0:
+                                    eq='y=('+str(m)+')x'
+                                elif c>0:
+                                    eq='y=('+str(m)+')x'+'+'+str(c)
+                                else:
+                                    eq='y=('+str(m)+')x'+str(c)
+                            print(eq)
         if c==1:
             print('DERIVATIVE OF CURVE IS',a)
         elif c==7:
             input_handler()
+            
         elif c==8:
             break
-           
-                    
+
+
+
 def differentiate(Expr):
     return Expr.differentiate()
 input_handler()
