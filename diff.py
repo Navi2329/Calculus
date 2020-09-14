@@ -1,9 +1,6 @@
-import math
-from math import *
+from fractions import Fraction
 from sympy import *
-
-
-
+from sympy.abc import x,y
 def match_for_binary_exp(expr, klass, op):
     atom_expr = None
     expr_length = 0
@@ -76,7 +73,7 @@ class AtomicExpr(Expr):
         if len(expr) < 3:
             return None
         if expr[0] == '(' and expr [len(expr)-1] == ')':
-            exp = Expr.match(expr[1:len(expr)-1])
+            exp = (Expr.match(expr[1:len(expr)-1]))
             return exp
         return None
 
@@ -93,7 +90,7 @@ class ConstExpr(Expr):
 
     def pretty(self):
 
-        return str(self._const)
+        return '('+str(self._const)+')'
       
     @staticmethod
     def match(expr):
@@ -160,7 +157,7 @@ class SubtractExpr(Expr):
 
         self._rhs_expr = rhs_expr
 
-    def SubtractExpr(self):
+    def differentiate(self):
 
         return SubtractExpr(
 
@@ -170,6 +167,21 @@ class SubtractExpr(Expr):
             self._rhs_expr.differentiate()
 
         )
+    def simplify(self):
+
+        self._lhs_expr = self._lhs_expr.simplify()
+
+        self._rhs_expr = self._rhs_expr.simplify()
+
+        if self._lhs_expr.is_zero():
+
+            return self._rhs_expr
+
+        if self._rhs_expr.is_zero():
+
+            return self._lhs_expr
+
+        return self
       
     @staticmethod
     def match(expr):
@@ -194,7 +206,7 @@ class SubtractExpr(Expr):
 
     def pretty(self):
 
-        return '(' + self._lhs_expr.pretty() + ')-(' +  self._rhs_expr.pretty() + ')'
+        return '(' + self._lhs_expr.pretty() + ') - (' +  self._rhs_expr.pretty() + ')'
 
 
 class MulExpr(Expr):
@@ -237,7 +249,7 @@ class MulExpr(Expr):
 
     def pretty(self):
 
-        return '(' + self._lhs_expr.pretty() + ') * (' +  self._rhs_expr.pretty() + ')'
+        return '('+ self._lhs_expr.pretty() + ') * (' +  self._rhs_expr.pretty() + ')'
     
 class DivExpr(Expr):
     def __init__(self,numExpr,denoExpr):
@@ -306,7 +318,7 @@ class power1(Expr):
     def match(expr):
         return match_for_binary_exp(expr, power1, '^')
     def pretty(self):
-        return '('+self.expr.pretty()+')**'+self.power.pretty()
+        return '('+self.expr.pretty()+')**('+self.power.pretty()+')'
     def simplify(self):
         pass
 
@@ -337,7 +349,7 @@ class mod(Expr):
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),DivExpr(self.expr,mod(self.expr)))
     def pretty(self):
-        return 'mod('+self.expr.pretty()+')'
+        return 'Abs('+self.expr.pretty()+')'
     @staticmethod
     def match(expr):
         return match_unary(expr, mod, 'mod')
@@ -503,27 +515,100 @@ class arccosec(Expr):
         return match_unary(expr, arccosec, 'arccosec')
 
 
-def diff(expr):
+'''def diff(expr):
     a=sympify(differentiate(expr).pretty())
-    print(sympify(differentiate(expr).pretty()))
-    q=input('enter x')
-    b=str(a).replace('x','('+q+')')
-    print(b)
-    print(N(b))
+    print(sympify(differentiate(expr).pretty()))'''
     
     
 def parse_and_differentiate(expr_string):
   input_expr = Expr.match(expr_string)
+  global ex
   print(input_expr.pretty())
+  ex=sympify(input_expr.pretty())
+  print(sympify(ex))
+  
   return input_expr.differentiate()
 
 def input_handler():
-  while True:
+    print('1)To find DERIVATIVE')
+    print('2)To find DERIVATIVE AT A POINT')
+    print('3)To find slope of tangent to the curve at a point')
+    print('4)To find slope of normal to the curve at a point')
+    print('5)To find equation of tangent at a point on curve')
+    print('6)To find equation of normal at a point on curve')
+    print('7)To enter another function')
+    print('8)EXIT')
+    print('YOU CAN ENTER THE FUNCTION')
     value = parse_and_differentiate(input())
-    print(sympify(value.pretty()))
-
-    
+    a=sympify(value.pretty())
+    ans='yes'
+    list=[2,3,4,5,6]
+    while ans=='yes':
+        c=int(input('Enter choice'))
+        if c in list:
+            q=input('Enter x')
+            
+            if c==2:
+                b=str(a).replace('x','('+q+')')
+                print('DERIVATIVE OF CURVE AT x='+q+' is',N(b))
+            elif c==3:
+                b=str(a).replace('x','('+q+')')
+                print('SLOPE OF NORMAL TO CURVE AT x='+q+' is',-1/N(b))
+            elif c==4:
+                b=str(ex).replace('x','('+q+')')
+                print('VALUE OF FUNCTION AT x='+q+' is',N(b))
+            elif c==5:
+                print('Equation of tangent at x='+q+' is')
+                m=N(str(a).replace('x','('+q+')'))
+                y=N(str(ex).replace('x','('+q+')'))
+                c=N(y-(m*int(q)))
+                m=Fraction(float(m))
+                c=Fraction(float(c))
+                if m==1:
+                    if c==0:
+                        eq='y=x'
+                    elif c>0:
+                        eq='y=x'+'+'+str(c)
+                    else:
+                        eq='y=x'+str(c)
+                else:
+                    if c==0:
+                        eq='y='+str(m)+'x'
+                    elif c>0:
+                        eq='y='+str(m)+'x'+'+'+str(c)
+                    else:
+                        eq='y='+str(m)+'x'+str(c)
+                print(eq)
+            elif c==6:
+                print('Equation of normal at x='+q+' is')
+                m=N(str(a).replace('x','('+q+')'))
+                m=Fraction(-1,Fraction(float(m)))
+                y=N(str(ex).replace('x','('+q+')'))
+                c=N(y-(m*int(q)))
+                c=round(c,1)
+                if m==1:
+                    if c==0:
+                        eq='y=x'
+                    elif c>0:
+                        eq='y=x'+'+'+str(c)
+                    else:
+                        eq='y=x'+str(c)
+                else:
+                    if c==0:
+                        eq='y=('+str(m)+')x'
+                    elif c>0:
+                        eq='y=('+str(m)+')x'+'+'+str(c)
+                    else:
+                        eq='y=('+str(m)+')x'+str(c)
+                print(eq)
+        if c==1:
+            print('DERIVATIVE OF CURVE IS',a)
+        elif c==7:
+            input_handler()
+        elif c==8:
+            break
+           
+                    
 def differentiate(Expr):
     return Expr.differentiate()
-
-    
+input_handler()
