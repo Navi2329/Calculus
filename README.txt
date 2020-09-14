@@ -18,5 +18,8 @@ Python Code to find derivative of a function
 **CODE FOR FUNCTIONS TO THE POWER IS COMPLETED
 #6/09/20
 *Code for parsing was added for all functions except exponential function.
-
+#14/09/20
+*Parsing for exponential function was added
+*Differentiability and existence of a function is now checked
+*Inverse trignometric function were named according to sympy
 
