@@ -3,6 +3,14 @@ from sympy import *
 from sympy.abc import x,y
 import math
 from math import *
+print('1)To find DERIVATIVE')
+print('2)To find slope of tangent to the curve at a point')
+print('3)To find slope of normal to the curve at a point')
+print('4)To find value of the function at a point')
+print('5)To find equation of tangent at a point on curve')
+print('6)To find equation of normal at a point on curve')
+print('7)To enter another function')
+print('8)EXIT')
 def match_for_binary_exp(expr, klass, op):
     atom_expr = None
     expr_length = 0
@@ -60,6 +68,7 @@ class Expr:
             acsc,
             power1,
             e,
+            mod,
             AtomicExpr,
           	PowerExpr,
           	ConstExpr,
@@ -75,7 +84,7 @@ class AtomicExpr(Expr):
     def match(expr):
         if len(expr) < 3:
             return None
-        if expr[0] == '(' and expr [len(expr)-1] == ')':
+        if expr[0]=='(' and expr[-1]==')':
             exp = (Expr.match(expr[1:len(expr)-1]))
             return exp
         return None
@@ -326,16 +335,6 @@ class power1(Expr):
         pass
 
 
-'''class comp(Expr):
-    def __init__(self,outerExpr,innerExpr):
-        self.innerExpr=innerExpr
-        self.outerExpr=outerExpr
-    def differentiate(self):
-        return MulExpr(comp(self.outerExpr.differentiate(),self.idefnnerExpr),self.innerExpr.differentiate())
-    def pretty(self):
-        return "(" + self.outerExpr.pretty() + "(" + self.innerExpr.pretty() + "))"
-    def simplify(self):
-        return self'''
 
 def match_unary(expr, klass, comp):
     if expr[0:len(comp)] != comp:
@@ -357,11 +356,6 @@ class mod(Expr):
     def match(expr):
         return match_unary(expr, mod, 'mod')
 
-      
-      
-      
-      
-      
 class ln(Expr):
     def __init__(self,expr):
         self.expr=expr
@@ -382,6 +376,8 @@ class e(Expr):
         return MulExpr(self.expr.differentiate(),e(self.expr))
     def pretty(self):
         return 'e**('+self.expr.pretty()+')'
+    def simplify(self):
+        return self
     @staticmethod
     def match(expr):
         return match_unary(expr,e,'e')
@@ -393,6 +389,8 @@ class sin(Expr):
         return MulExpr(self.expr.differentiate(),cos(self.expr))
     def pretty(self):
         return 'sin('+self.expr.pretty()+')'
+    def simplify(self):
+        return self
     @staticmethod
     def match(expr):
         return match_unary(expr, sin, 'sin')
@@ -529,24 +527,15 @@ class acsc(Expr):
 def parse_and_differentiate(expr_string):
   input_expr = Expr.match(expr_string)
   global ex
-  print(input_expr.pretty())
-  ex=sympify(input_expr.pretty())
-  print(sympify(ex))
+  ex=simplify(input_expr.pretty())
+  print(ex)
   
   return input_expr.differentiate()
 
 def input_handler():
-    print('1)To find DERIVATIVE')
-    print('2)To find slope of tangent to the curve at a point')
-    print('3)To find slope of normal to the curve at a point')
-    print('4)To find value of the function at a point')
-    print('5)To find equation of tangent at a point on curve')
-    print('6)To find equation of normal at a point on curve')
-    print('7)To enter another function')
-    print('8)EXIT')
     print('YOU CAN ENTER THE FUNCTION')
     value = parse_and_differentiate(input())
-    a=sympify(value.pretty())
+    a=simplify(value.pretty())
     ans='yes'
     list=[2,3,4,5,6]
     while ans=='yes':
@@ -555,13 +544,13 @@ def input_handler():
             q=input('Enter x')
             def defined():
                 b=str(ex).replace('x','('+q+')')
-                if 'nan' in str(N(b)) or 'zoo' in str(N(b)) or 'I' in str(N(b)):
+                if 'nan' in str(N(b)) or N(b) is zoo or N(b).is_real==False:
                     return False
                 else:
                     return True
             def differentiable():
                 b=str(a).replace('x','('+q+')')
-                if 'nan' in str(N(b)) or 'zoo' in str(N(b)) or 'I' in str(N(b)):
+                if 'nan' in str(N(b)) or N(b) is zoo or N(b).is_real==False:
                     return False
                 else:
                     return True
@@ -569,6 +558,7 @@ def input_handler():
                 print('THE Function is not defined at x=',q)
                 input_handler()
             else:
+                
                 if c==4:
                     b=str(ex).replace('x','('+q+')')
                     print('VALUE OF FUNCTION AT x='+q+' is',N(b))
@@ -588,9 +578,9 @@ def input_handler():
                             print('Equation of tangent at x='+q+' is')
                             m=N(str(a).replace('x','('+q+')'))
                             y=N(str(ex).replace('x','('+q+')'))
-                            c=N(y-(m*int(q)))
+                            c=N(y-(m*N(q)))
                             m=Fraction(float(m))
-                            c=Fraction(float(c))
+                            c=round(c,2)
                             if m==1:
                                 if c==0:
                                     eq='y=x'
@@ -598,6 +588,16 @@ def input_handler():
                                     eq='y=x'+'+'+str(c)
                                 else:
                                     eq='y=x'+str(c)
+
+                            elif m==-1:
+                                if c==0:
+                                    eq='y=-x'
+                                elif c>0:
+                                    eq='y=-x'+'+'+str(c)
+                                else:
+                                    eq='y=-x'+str(c)
+    
+    
                             else:
                                 if c==0:
                                     eq='y='+str(m)+'x'
@@ -612,7 +612,7 @@ def input_handler():
                             m=Fraction(-1,Fraction(float(m)))
                             y=N(str(ex).replace('x','('+q+')'))
                             c=N(y-(m*int(q)))
-                            c=round(c,1)
+                            c=round(c,2)
                             if m==1:
                                 if c==0:
                                     eq='y=x'
