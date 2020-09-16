@@ -1,12 +1,36 @@
+print("***************DIFFERENTIAL CALCULUS****************")
+print("A branch of mathematics concerned with the determination, properties, and application of derivatives and differentials.")
+print("DID YOU KNOW , Sir Isaac Newton invented calculus in approximately the same amount of time the average student learns it in university.")
+print("AIM: To calucate the derivatives of various functions and use the application of it.")
+print("To Note: Differentiability , Differentiation and Applications of Differentiation is the scope of this project")
+print("Fundamental theorem of Calculus or Leibniz rule is differentiating an definite integral : d/dx ʃ(g(x) to h(x)) f(t)dt which is again out of scope")
+print("Some general formulae are given below for your reference:")
+from prettytable import PrettyTable
+table=PrettyTable()
+table.field_names=["Function y=f(x)","Derivative dy/dx=f'(x)","#","Function y=g(x)","Derivative dy/dx=g'(x)"]
+table.add_row(["x**n","n*x**(n-1)","#","K,where K is a constant",0])
+table.add_row(["sin(x)","cos(x)","#","cos(x)","-sin(x)"])
+table.add_row(["tan(x)","(sec(x))**2","#","cosec(x)","-cosec(x)*cot(x)"])
+table.add_row(["sec(x)","sec(x)*tan(x)","#","cot(x)","-(cosec(x))**2"])
+table.add_row(["ln(x)","1/x","#","e**x","e**x"])
+table.add_row(["a**x","(a**x)*ln(a)","#","k*f(x)+l*g(x)","k*f'(x)+l*g'(x)"])
+table.add_row(["asin(x)","1/sqrt(1-x**2)","#","acos(x)","-1/sqrt(1-x**2)"])
+table.add_row(["atan(x)","1/(1+x**2)","#","acosec(x)"," -1/(sqrt(1 - x**2)*Abs(x))"])
+table.add_row(["asec(x)","1/(sqrt(1 - x**2)*Abs(x))","#","acot(x)"," -1/(x**2 + 1)"])
+table.add_row(["PRODUCT RULE: f(x)*g(x)","f'(x)*g(x)+g'(x)*f(x)","#","DIVISION RULE: f(x)/g(x)","(g(x)*f'(x)-f(x)*g'(x))/((g(x))**2"])
+print(table)
+print("Note: If we desire to bring back the function from the derivative f'(x) , we perform ʃf'(x)dx ,which is out of the scope of this project.")
 from fractions import Fraction
 from sympy import *
 from sympy.abc import x,y
 import math
 from math import *
-print('1)To find DERIVATIVE')
-print('2)To find slope of tangent to the curve at a point')
-print('3)To find slope of normal to the curve at a point')
-print('4)To find value of the function at a point')
+print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+print("Instructions: ")
+print('1)To find DERIVATIVE or dy/dx')
+print('2)To find slope of tangent to the curve at a point or dy/dx|x=a')
+print('3)To find slope of normal to the curve at a point or -dx/dy|x=a')
+print('4)To find value of the function at a point or f(a) or y|x=a')
 print('5)To find equation of tangent at a point on curve')
 print('6)To find equation of normal at a point on curve')
 print('7)To enter another function')
@@ -518,17 +542,13 @@ class acsc(Expr):
     def match(expr):
         return match_unary(expr, acsc, 'acsc')
 
-
-'''def diff(expr):
-    a=sympify(differentiate(expr).pretty())
-    print(sympify(differentiate(expr).pretty()))'''
     
     
 def parse_and_differentiate(expr_string):
   input_expr = Expr.match(expr_string)
   global ex
   ex=simplify(input_expr.pretty())
-  print(ex)
+  print("The function you have Entered: y=",ex)
   
   return input_expr.differentiate()
 
@@ -539,9 +559,9 @@ def input_handler():
     ans='yes'
     list=[2,3,4,5,6]
     while ans=='yes':
-        c=int(input('Enter choice'))
+        c=int(input('Enter your choice: '))
         if c in list:
-            q=input('Enter x')
+            q=input('Enter a value for x: ')
             def defined():
                 b=str(ex).replace('x','('+q+')')
                 if 'nan' in str(N(b)) or N(b) is zoo or N(b).is_real==False:
@@ -550,7 +570,7 @@ def input_handler():
                     return True
             def differentiable():
                 b=str(a).replace('x','('+q+')')
-                if 'nan' in str(N(b)) or N(b) is zoo or N(b).is_real==False:
+                if 'nan' in str(N(b)) or N(b) is zoo or N(b).is_real==False or "I" in str(N(b)):
                     return False
                 else:
                     return True
@@ -561,7 +581,7 @@ def input_handler():
                 
                 if c==4:
                     b=str(ex).replace('x','('+q+')')
-                    print('VALUE OF FUNCTION AT x='+q+' is',N(b))
+                    print('VALUE OF FUNCTION AT x='+q+' ',N(b))
                 if c in [2,3,5,6]:
                     if differentiable()==False:
                         print('THE Function is not differentiable at x=',q)
@@ -629,7 +649,7 @@ def input_handler():
                                     eq='y=('+str(m)+')x'+str(c)
                             print(eq)
         if c==1:
-            print('DERIVATIVE OF CURVE IS',a)
+            print('DERIVATIVE OF CURVE =dy/dx=',a)
         elif c==7:
             input_handler()
             
@@ -638,6 +658,4 @@ def input_handler():
 
 
 
-def differentiate(Expr):
-    return Expr.differentiate()
 input_handler()
