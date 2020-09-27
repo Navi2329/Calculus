@@ -22,4 +22,6 @@ Python Code to find derivative of a function
 *Parsing for exponential function was added
 *Differentiability and existence of a function is now checked
 *Inverse trignometric function were named according to sympy
+#28/09/20
+*Equation of normal and tangents will now check if a function is existing at that point
 
