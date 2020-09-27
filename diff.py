@@ -10,12 +10,12 @@ table=PrettyTable()
 table.field_names=["Function y=f(x)","Derivative dy/dx=f'(x)","#","Function y=g(x)","Derivative dy/dx=g'(x)"]
 table.add_row(["x**n","n*x**(n-1)","#","K,where K is a constant",0])
 table.add_row(["sin(x)","cos(x)","#","cos(x)","-sin(x)"])
-table.add_row(["tan(x)","(sec(x))**2","#","cosec(x)","-cosec(x)*cot(x)"])
-table.add_row(["sec(x)","sec(x)*tan(x)","#","cot(x)","-(cosec(x))**2"])
+table.add_row(["tan(x)","(sec(x))**2","#","csc(x)","-csc(x)*cot(x)"])
+table.add_row(["sec(x)","sec(x)*tan(x)","#","cot(x)","-(csc(x))**2"])
 table.add_row(["ln(x)","1/x","#","e**x","e**x"])
 table.add_row(["a**x","(a**x)*ln(a)","#","k*f(x)+l*g(x)","k*f'(x)+l*g'(x)"])
 table.add_row(["asin(x)","1/sqrt(1-x**2)","#","acos(x)","-1/sqrt(1-x**2)"])
-table.add_row(["atan(x)","1/(1+x**2)","#","acosec(x)"," -1/(sqrt(1 - x**2)*Abs(x))"])
+table.add_row(["atan(x)","1/(1+x**2)","#","acsc(x)"," -1/(sqrt(1 - x**2)*Abs(x))"])
 table.add_row(["asec(x)","1/(sqrt(1 - x**2)*Abs(x))","#","acot(x)"," -1/(x**2 + 1)"])
 table.add_row(["PRODUCT RULE: f(x)*g(x)","f'(x)*g(x)+g'(x)*f(x)","#","DIVISION RULE: f(x)/g(x)","(g(x)*f'(x)-f(x)*g'(x))/((g(x))**2"])
 print(table)
@@ -462,7 +462,7 @@ class cosec(Expr):
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),MulExpr(ConstExpr(-1),MulExpr(cosec(self.expr),cot(self.expr))))
     def pretty(self):
-        return "cosec("+self.expr.pretty()+")"
+        return "csc("+self.expr.pretty()+")"
     @staticmethod
     def match(expr):
         return match_unary(expr, cosec, 'cosec')
@@ -555,111 +555,139 @@ def parse_and_differentiate(expr_string):
 def input_handler():
     try:
         print('YOU CAN ENTER THE FUNCTION')
+        print('Please give brackets to every constant term and variable seperately and make sure to use only two terms with an operator with brackets to avoid errors')
         value = parse_and_differentiate(input())
         a=simplify(value.pretty())
         ans='yes'
         list=[2,3,4,5,6]
         while ans=='yes':
-            c=int(input('Enter your choice: '))
-            if c in list:
-                q=input('Enter a value for x: ')
+            c=int(input('Enter choice:'))
+            if c==1:
+                print('DERIVATIVE OF CURVE =dy/dx=',a)
+            elif c==7:
+                    input_handler()
+            elif c==8:
+                    break
+            elif c in list:
+                q=input('Enter x:')
                 def defined():
                     b=str(ex).replace('x','('+q+')')
-                    if 'nan' in str(N(b)) or N(b) is zoo or N(b).is_real==False:
+                    if 'nan' in str(N(b)) or 'I' in str(N(b)) or str(N(b))=='zoo':
                         return False
                     else:
                         return True
                 def differentiable():
                     b=str(a).replace('x','('+q+')')
-                    if 'nan' in str(N(b)) or N(b) is zoo or N(b).is_real==False or "I" in str(N(b)):
+                    if 'nan' in str(N(b)) or 'I' in str(N(b)):
                         return False
                     else:
                         return True
                 if defined()==False:
-                    print('THE Function is not defined at x=',q)
+                    print('The function is not defined at x=',q)
                     input_handler()
                 else:
-                    
                     if c==4:
                         b=str(ex).replace('x','('+q+')')
-                        print('VALUE OF FUNCTION AT x='+q+' ',N(b))
+                        if str(N(b))=='zoo':
+                            print('The value of the function at x='+q+': infinity/ not defined')
+                        else:
+                            print('The value of the function at x='+q+' :',N(b))
                     if c in [2,3,5,6]:
                         if differentiable()==False:
-                            print('THE Function is not differentiable at x=',q)
+                            print('The function is not differentiable at x=',q)
                             input_handler()
                         else:
                             if c==2:
                                 b=str(a).replace('x','('+q+')')
-                                print('DERIVATIVE OF CURVE AT x='+q+' is',N(b))
-                            elif c==3:
+                                if str(N(b))=='zoo':
+                                    print('The slope of the tangent at x='+q+': infinity')
+                                else:
+                                    print('The slope of the tangent at x='+q+' :',N(b))
+
+                            if c==3:
                                 b=str(a).replace('x','('+q+')')
-                                print('SLOPE OF NORMAL TO CURVE AT x='+q+' is',-1/N(b))
-
-                            elif c==5:
-                                print('Equation of tangent at x='+q+' is')
-                                m=N(str(a).replace('x','('+q+')'))
-                                y=N(str(ex).replace('x','('+q+')'))
-                                c=N(y-(m*N(q)))
-                                m=Fraction(float(m))
-                                c=round(c,2)
-                                if m==1:
-                                    if c==0:
-                                        eq='y=x'
-                                    elif c>0:
-                                        eq='y=x'+'+'+str(c)
-                                    else:
-                                        eq='y=x'+str(c)
-
-                                elif m==-1:
-                                    if c==0:
-                                        eq='y=-x'
-                                    elif c>0:
-                                        eq='y=-x'+'+'+str(c)
-                                    else:
-                                        eq='y=-x'+str(c)
-        
-        
+                                if N(b)==0:
+                                    print('The slope of the normal at x='+q+': infinity')
                                 else:
-                                    if c==0:
-                                        eq='y='+str(m)+'x'
-                                    elif c>0:
-                                        eq='y='+str(m)+'x'+'+'+str(c)
-                                    else:
-                                        eq='y='+str(m)+'x'+str(c)
-                                print(eq)
-                            elif c==6:
-                                print('Equation of normal at x='+q+' is')
-                                m=N(str(a).replace('x','('+q+')'))
-                                m=Fraction(-1,Fraction(float(m)))
-                                y=N(str(ex).replace('x','('+q+')'))
-                                c=N(y-(m*int(q)))
-                                c=round(c,2)
-                                if m==1:
-                                    if c==0:
-                                        eq='y=x'
-                                    elif c>0:
-                                        eq='y=x'+'+'+str(c)
-                                    else:
-                                        eq='y=x'+str(c)
+                                    print('The slope of the normal at x='+q+' :',-1/N(b))
+                            if c==5:
+                                if defined()==False:
+                                    print('Tangent does not exist')
                                 else:
-                                    if c==0:
-                                        eq='y=('+str(m)+')x'
-                                    elif c>0:
-                                        eq='y=('+str(m)+')x'+'+'+str(c)
+                                    print('Equation of tangent at x='+q+' is')
+                                    m=N(str(a).replace('x','('+q+')'))
+                                    y=N(str(ex).replace('x','('+q+')'))
+                                    if m is zoo:
+                                        c=q
+                                        eq='x='+q
                                     else:
-                                        eq='y=('+str(m)+')x'+str(c)
+                                        c=N(y-(m*N(q)))
+                                        m=Fraction(float(m))
+                                        c=round(c,2)
+                                        if m==1:
+                                            if c==0:
+                                                eq='y=x'
+                                            elif c>0:
+                                                eq='y=x'+'+'+str(c)
+                                            else:
+                                                eq='y=x'+str(c)
+
+                                        elif m==-1:
+                                            if c==0:
+                                                eq='y=-x'
+                                            elif c>0:
+                                                eq='y=-x'+'+'+str(c)
+                                            else:
+                                                eq='y=-x'+str(c)
+                                        elif m==0:
+                                            if c==0:
+                                                eq='y='+str(c)
+                                            elif c>0:
+                                                eq='y=+'+str(c)
+                                            else:
+                                                eq='y='+str(c)     
+                                        else:
+                                            if c==0:
+                                                eq='y='+str(m)+'x'
+                                            elif c>0:
+                                                eq='y='+str(m)+'x'+'+'+str(c)
+                                            else:
+                                                eq='y='+str(m)+'x'+str(c)
+                                    print(eq)
+                            if c==6:
+                                if defined()==False:
+                                    print('Normal does not exist')
+                                else:
+                                    print('Equation of normal at x='+q+' is')
+                                    m=N(str(a).replace('x','('+q+')'))
+                                    if m==0 or m is zoo:
+                                        pass
+                                    else:
+                                        m=Fraction(-1,Fraction(float(m)))
+                                        y=N(str(ex).replace('x','('+q+')'))
+                                        c=N(y-(m*N(q)))
+                                        c=round(c,2)
+                                    if m==1:
+                                        if c==0:
+                                            eq='y=x'
+                                        elif c>0:
+                                            eq='y=x'+'+'+str(c)
+                                        else:
+                                            eq='y=x'+str(c)
+
+                                    if m==0:
+                                        c=N(str(ex).replace('x','('+q+')'))
+                                        eq='x='+str(round(c,2))
+                                    else:
+                                        if c==0:
+                                            eq='y=('+str(m)+')x'
+                                        elif c>0:
+                                            eq='y=('+str(m)+')x'+'+'+str(c)
+                                        else:
+                                            eq='y=('+str(m)+')x'+str(c)
                                 print(eq)
-            if c==1:
-                print('DERIVATIVE OF CURVE =dy/dx=',a)
-            elif c==7:
-                input_handler()
-                
-            elif c==8:
-                break
     except:
-        print("Precedence error! Please Enter with proper brackets!")
+        print('Please enter the function with proper brackets or check the values entered')
         input_handler()
-
-
 
 input_handler()
