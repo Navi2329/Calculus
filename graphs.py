@@ -566,14 +566,20 @@ def input_handler():
         elif c==10:
                 break
         elif c==8:
-            b=ex
-            c2=str(b).replace('e**','exp(')
-            c2=c2+')'
+            if 'e**' in str(ex):
+                b=ex
+                c2=str(b).replace('e**','exp(')
+                c2=c2+')'
+            else:
+                c2=ex
             z1=plot(c2,xlim=(-10,10),ylim=(-10,10),ylabel=ex)    
         elif c==9:
-            b=a
-            c2=str(b).replace('e**','exp(')
-            c2=c2+')'
+            if 'e**' in str(a):
+                b=a
+                c2=str(b).replace('e**','exp(')
+                c2=c2+')'
+            else:
+                c2=a
             plot(c2,ylabel=a,xlim=(-10,10),ylim=(-10,10))
         elif c in list:
             q=input('Enter x:')
@@ -661,9 +667,12 @@ def input_handler():
                                             eq='y='+str(m)+'*x'+str(c)
                                 print(eq)
                                 z1=plot(str(eq)[2::],show=False,line_color='red',ylim=(-10,10),legend=True)
-                                b=ex
-                                c2=str(b).replace('e**','exp(')
-                                c2=c2+')'
+                                if 'e**' in str(ex):
+                                    b=ex
+                                    c2=str(b).replace('e**','exp(')
+                                    c2=c2+')'
+                                else:
+                                    c2=ex
                                 z2=plot(c2,xlim=(-10,10),ylim=(-10,10),ylabel=ex,show=False,legend=True)  
                                 z1.extend(z2)
                                 z1.show()
@@ -701,9 +710,12 @@ def input_handler():
                                         eq='y=('+str(m)+')*x'+str(c)
                             print(eq)
                             z1=plot(str(eq)[2::],show=False,line_color='red',ylim=(-10,10),legend=True)
-                            b=ex
-                            c2=str(b).replace('e**','exp(')
-                            c2=c2+')'
+                            if 'e**' in str(ex):
+                                b=ex
+                                c2=str(b).replace('e**','exp(')
+                                c2=c2+')'
+                            else:
+                                c2=ex
                             z2=plot(c2,xlim=(-10,10),ylim=(-10,10),ylabel=ex,show=False,legend=True)  
                             z1.extend(z2)
                             z1.show()    
