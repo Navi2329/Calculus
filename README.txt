@@ -26,4 +26,6 @@ Python Code to find derivative of a function
 *Equation of normal and tangents will now check if a function is existing at that point
 #30/09/20
 *Graphs of the function,derivative,tangent and normal was added
+#5/10/20
+*Graphs of exponential functions works now
 
