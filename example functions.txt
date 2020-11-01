@@ -20,3 +20,4 @@ diff(arctan(AddExpr(MulExpr(ConstExpr(2),PowerExpr(5)),MulExpr(ConstExpr(1),Powe
 diff(arcsec(AddExpr(MulExpr(ConstExpr(2),PowerExpr(5)),MulExpr(ConstExpr(1),PowerExpr(4)))))
 diff(arccosec(AddExpr(MulExpr(ConstExpr(2),PowerExpr(5)),MulExpr(ConstExpr(1),PowerExpr(4)))))
 diff(arccot(AddExpr(MulExpr(ConstExpr(2),PowerExpr(5)),MulExpr(ConstExpr(1),PowerExpr(4)))))
+(((((5)*(x^4))+((3)*(x^3)))-((9)*(x^2)))+((12)*(x)))-(8)
