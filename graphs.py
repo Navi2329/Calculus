@@ -25,18 +25,21 @@ from sympy import *
 from sympy.abc import x,y
 import math
 from math import *
+import subprocess as sp
 print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
 print("Instructions: ")
 print('1)To find DERIVATIVE or dy/dx')
 print('2)To find slope of tangent to the curve at a point or dy/dx|x=a')
 print('3)To find slope of normal to the curve at a point or -dx/dy|x=a')
-##print('4)To find value of the function at a point or f(a) or y|x=a')
+print('4)To find value of the function at a point or f(a) or y|x=a')
 print('5)To find equation of tangent at a point on curve')
 print('6)To find equation of normal at a point on curve')
 print('7)To enter another function')
 print('8)Graph of function')
 print('9)Graph of derivative')
-print('10)EXIT')
+print('10)See History')
+print('11)Clear History')
+print('12)EXIT')
 def match_for_binary_exp(expr, klass, op):
     atom_expr = None
     expr_length = 0
@@ -551,10 +554,39 @@ def parse_and_differentiate(expr_string):
   return input_expr.differentiate()
 
 def input_handler():
-    print('YOU CAN ENTER THE FUNCTION')
     print('Please give brackets to every constant term and variable seperately and make sure to use only two terms with an operator with brackets to avoid errors')
-    value = parse_and_differentiate(input())
+    list1=[]
+    try:
+        f=open('history.txt','r')
+    except:
+        f=open('history.txt','w+')
+    line=f.readlines()
+    f.close()
+    for i in line:
+        list1.append(i[i.index(')')+1:-1])
+    qn=input('DO YOU WANT TO SEE HISTORY(y/n)')
+    if qn=='y':
+        if len(list1)!=0:
+            sp.call(['gedit','history.txt'])
+            qn1=input('Do you want to copy a function from history(y/n)')
+            if qn1=='y':
+                no=int(input('enter line number'))
+                func=list1[no-1]
+            else:
+                func=input('Enter function')
+        else:
+            print('The file is empty')
+            func=input('Enter function')
+    else:
+        func=input('Enter function')
+    
+    value = parse_and_differentiate(func)
     a=simplify(value.pretty())
+    f=open('history.txt','a')
+    print(list1)
+    if list1.count(func)==0:
+        f.write(str(len(list1)+1)+')'+func+'\n')
+    f.close()
     ans='yes'
     list=[2,3,4,5,6]
     while ans=='yes':
@@ -563,8 +595,15 @@ def input_handler():
             print('DERIVATIVE OF CURVE =dy/dx=',a)
         elif c==7:
                 input_handler()
+        elif c==11:
+            f=open('history.txt','w+')
         elif c==10:
-                break
+            if len(list1)!=0:
+                sp.call(['notepad','history.txt'])
+            f.close()
+        elif c==12:
+            break
+
         elif c==8:
             if 'e**' in str(ex):
                 b=ex
