@@ -28,4 +28,9 @@ Python Code to find derivative of a function
 *Graphs of the function,derivative,tangent and normal was added
 #5/10/20
 *Graphs of exponential functions works now
+#21/11/20
+*History feature is added
+*minor changes in choices
+*if error:gedit-no such file or directory,
+   rename gedit to notepad
 
