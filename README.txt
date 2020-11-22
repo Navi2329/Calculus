@@ -33,4 +33,8 @@ Python Code to find derivative of a function
 *minor changes in choices
 *if error:gedit-no such file or directory,
    rename gedit to notepad
+#23/11/20
+*startfile in os module was added to tackle errors in windows
+*from sympy import * was changed to import the needed functions individually(simplify,plot,zoo,N)
+******Decorations to code to be done******
 
