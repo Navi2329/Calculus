@@ -41,4 +41,5 @@ Python Code to find derivative of a function
 *removable discontinuity was added using limits(03/12/20)
 *the above was removed as it was useless(04/12/20)
 *A choice to calculate limit of a function was added(04/12/20)
+******Decorations are not going to be done*******
 
