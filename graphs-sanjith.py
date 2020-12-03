@@ -21,7 +21,7 @@ table.add_row(["PRODUCT RULE: f(x)*g(x)","f'(x)*g(x)+g'(x)*f(x)","#","DIVISION R
 print(table)
 print("Note: If we desire to bring back the function from the derivative f'(x) , we perform ʃf'(x)dx ,which is out of the scope of this project.")
 from fractions import Fraction
-from sympy import simplify,plot,N,zoo,nan,limit
+from sympy import simplify,plot,N,zoo,limit
 from sympy.abc import x,y
 import math
 from math import *
@@ -32,14 +32,15 @@ print('1)To find DERIVATIVE or dy/dx')
 print('2)To find slope of tangent to the curve at a point or dy/dx|x=a')
 print('3)To find slope of normal to the curve at a point or -dx/dy|x=a')
 print('4)To find value of the function at a point or f(a) or y|x=a')
-print('5)To find equation of tangent at a point on curve')
-print('6)To find equation of normal at a point on curve')
-print('7)To enter another function')
+print('5)To find limit of function at a point')
+print('6)To find equation of tangent at a point on curve')
+print('7)To find equation of normal at a point on curve')
 print('8)Graph of function')
 print('9)Graph of derivative')
-print('10)See History')
-print('11)Clear History')
-print('12)EXIT')
+print('10)To enter another function')
+print('11)See History')
+print('12)Clear History')
+print('13)EXIT')
 def match_for_binary_exp(expr, klass, op):
     atom_expr = None
     expr_length = 0
@@ -106,7 +107,7 @@ class Expr:
             exp = klass.match(expr)
             if exp is not None:
                 return exp
-        
+        return None
 
 class AtomicExpr(Expr):
     @staticmethod
@@ -131,7 +132,7 @@ class ConstExpr(Expr):
 
     def pretty(self):
 
-        return '('+str(self._const)+")"
+        return '('+str(self._const)+')'
       
     @staticmethod
     def match(expr):
@@ -557,7 +558,7 @@ def parse_and_differentiate(expr_string):
   return input_expr.differentiate()
 
 def input_handler():
-    
+
     print('Please give brackets to every constant term and variable seperately and make sure to use only two terms with an operator with brackets to avoid errors')
     list1=[]
     try:
@@ -574,12 +575,8 @@ def input_handler():
             os.startfile('history.txt')
             qn1=input('Do you want to copy a function from history(y/n)')
             if qn1=='y':
-                try:
-                    no=int(input('enter line number'))
-                    func=list1[no-1]
-                except:
-                    print('Enter proper line number')
-                    input_handler
+                no=int(input('enter line number'))
+                func=list1[no-1]
             elif qn1=='n':
                 func=input('Enter function')
             else:
@@ -601,20 +598,20 @@ def input_handler():
         f.write(str(len(list1)+1)+')'+func+'\n')
     f.close()
     ans='yes'
-    list2=[2,3,4,5,6]
+    list=[2,3,4,5,6,7]
     while ans=='yes':
         c=int(input('Enter choice:'))
         if c==1:
             print('DERIVATIVE OF CURVE =dy/dx=',a)
-        elif c==7:
-                input_handler()
-        elif c==11:
-            f=open('history.txt','w+')
         elif c==10:
+                input_handler()
+        elif c==12:
+            f=open('history.txt','w+')
+        elif c==11:
             if len(list1)!=0:
                 os.startfile('history.txt')
             f.close()
-        elif c==12:
+        elif c==13:
             break
 
         elif c==8:
@@ -633,40 +630,18 @@ def input_handler():
             else:
                 c2=a
             plot(c2,ylabel=a,xlim=(-10,10),ylim=(-10,10))
-        elif c in list2:
+        elif c in list:
             q=input('Enter x:')
             def defined():
                 b=str(ex).replace('x','('+q+')')
                 if 'nan' in str(N(b)) or 'I' in str(N(b)) or str(N(b))=='zoo':
-                    if q!='pi/2':
-                        if limit(ex,x,int(q),'+')==limit(ex,x,int(q),'-'):
-                            global w
-                            w=limit(ex,x,int(q))
-                            return True
-                        else:
-                            return False
-                    else:
-                        if limit(ex,x,q,'+')==limit(ex,x,q,'-'):
-                            w=limit(ex,x,)
-                            return True
-                        else:
-                            return False
-                        
-                        
-                    
-                        
+                    return False
                 else:
                     return True
             def differentiable():
                 b=str(a).replace('x','('+q+')')
                 if 'nan' in str(N(b)) or 'I' in str(N(b)):
-                    if q!='pi/2':
-                        if limit(a,x,int(q),'+')==limit(a,x,int(q),'-'):
-                            global r
-                            r=limit(a,x,int(q))
-                            return True
-                    else:
-                        return False
+                    return False
                 else:
                     return True
             if defined()==False:
@@ -677,11 +652,17 @@ def input_handler():
                     b=str(ex).replace('x','('+q+')')
                     if str(N(b))=='zoo':
                         print('The value of the function at x='+q+': infinity/ not defined')
-                    elif str(N(b))=='nan':
-                        print('The value of the function at x='+q+' :',w)
                     else:
                         print('The value of the function at x='+q+' :',N(b))
-                if c in [2,3,5,6]:
+                if c==5:
+                    if defined()==False:
+                        if limit(ex,x,int(q),'+')==limit(ex,x,int(q),'-'):
+                            print('limit of the function at x='+q+':',limit(ex,x,int(q)))
+                        else:
+                            print('limit does not exist')
+                    else:
+                        print(limit(ex,x,int(q)))
+                if c in [2,3,7,6]:
                     if differentiable()==False:
                         print('The function is not differentiable at x=',q)
                         input_handler()
@@ -690,37 +671,26 @@ def input_handler():
                             b=str(a).replace('x','('+q+')')
                             if str(N(b))=='zoo':
                                 print('The slope of the tangent at x='+q+': infinity')
-                            elif str(N(b))=='nan':
-                                print('Slope of tangent at x='+q+':',r)
                             else:
                                 print('The slope of the tangent at x='+q+' :',N(b))
                         if c==3:
                             b=str(a).replace('x','('+q+')')
                             if N(b)==0:
                                 print('The slope of the normal at x='+q+': infinity')
-                            if str(N(b))=='nan':
-                                if r==0:
-                                    print('The slope of the normal at x='+q+': infinity')
-                                else:
-                                    print('The slope of the normal at x='+q+' :',-1/r)
                             else:
                                 print('The slope of the normal at x='+q+' :',-1/N(b))
-                        if c==5:
+                        if c==6:
                             if defined()==False:
                                 print('Tangent does not exist')
                             else:
                                 print('Equation of tangent at x='+q+' is')
                                 m=N(str(a).replace('x','('+q+')'))
                                 y=N(str(ex).replace('x','('+q+')'))
-                                if str(m)=='nan':
-                                    m=r
-                                elif str(y)=='nan':
-                                    y=w
                                 if m is zoo:
+                                    c=q
                                     eq='x='+q
                                 else:
                                     c=N(y-(m*N(q)))
-                                    print(c)
                                     m=Fraction(float(m))
                                     c=round(c,2)
                                     if m==1:
@@ -764,7 +734,7 @@ def input_handler():
                                 z1.extend(z2)
                                 z1.show()
                                 
-                        if c==6:
+                        if c==7:
                             if defined()==False:
                                 print('Normal does not exist')
                             else:
