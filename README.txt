@@ -44,6 +44,7 @@ Python Code to find derivative of a function
 *Issue regarding Applications regarding exponential function was fixed
 *imported new module of sympy named plot_explicit to plot vertical tangents
 *Imported sys library to tackle break issue when running nested loop(sys.exit())
+*History.txt was uploaded to check list of already typed functions
 *Reduced the number of lines by a minimum of 20 lines
 *Possibility of final release
 *****************************************************
