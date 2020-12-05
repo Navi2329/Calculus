@@ -21,13 +21,17 @@ table.add_row(["PRODUCT RULE: f(x)*g(x)","f'(x)*g(x)+g'(x)*f(x)","#","DIVISION R
 print(table)
 print("Note: If we desire to bring back the function from the derivative f'(x) , we perform ʃf'(x)dx ,which is out of the scope of this project.")
 from fractions import Fraction
-from sympy import simplify,plot,N,zoo,limit,exp
+from sympy import simplify,plot,N,zoo,limit,plot_implicit,Eq
 from sympy.abc import x,y
 import math
 from math import *
 import subprocess as sp
+import warnings
+warnings.filterwarnings("ignore")
+import sys
 print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
 print("Instructions: ")
+print('Please give brackets to every constant term and variable seperately and make sure to use only two terms with an operator with brackets to avoid errors')
 print('1)To find DERIVATIVE or dy/dx')
 print('2)To find slope of tangent to the curve at a point or dy/dx|x=a')
 print('3)To find slope of normal to the curve at a point or -dx/dy|x=a')
@@ -406,7 +410,7 @@ class e(Expr):
     def differentiate(self):
         return MulExpr(self.expr.differentiate(),e(self.expr))
     def pretty(self):
-        return 'e**('+self.expr.pretty()+')'
+        return 'exp('+self.expr.pretty()+')'
     def simplify(self):
         return self
     @staticmethod
@@ -556,144 +560,211 @@ def parse_and_differentiate(expr_string):
   print("The function you have Entered: y=",ex)
   
   return input_expr.differentiate()
-
 def input_handler():
-
-    print('Please give brackets to every constant term and variable seperately and make sure to use only two terms with an operator with brackets to avoid errors')
-    list1=[]
     try:
-        f=open('history.txt','r')
-    except:
-        f=open('history.txt','w+')
-    line=f.readlines()
-    f.close()
-    for i in line:
-        list1.append(i[i.index(')')+1:-1])
-    qn=input('DO YOU WANT TO SEE HISTORY(y/n)')
-    if qn=='y':
-        if len(list1)!=0:
-            sp.call(['gedit','history.txt'])
-            qn1=input('Do you want to copy a function from history(y/n)')
-            if qn1=='y':
-                no=int(input('enter line number'))
-                func=list1[no-1]
-            elif qn1=='n':
-                func=input('Enter function')
-            else:
-                print('Answer with y/n')
-                input_handler()
-        else:
-            print('The file is empty')
-            func=input('Enter function')
-    elif qn=='n':
-        func=input('Enter function')
-    else:
-        print('Answer with y/n')
-        input_handler()
-    
-    value = parse_and_differentiate(func)
-    a=simplify(value.pretty())
-    f=open('history.txt','a')
-    if list1.count(func)==0:
-        f.write(str(len(list1)+1)+')'+func+'\n')
-    f.close()
-    ans='yes'
-    list=[2,3,4,5,6,7]
-    while ans=='yes':
-        c=int(input('Enter choice:'))
-        if c==1:
-            print('DERIVATIVE OF CURVE =dy/dx=',a)
-        elif c==10:
-                input_handler()
-        elif c==12:
+        list1=[]
+        try:
+            f=open('history.txt','r')
+        except:
             f=open('history.txt','w+')
-        elif c==11:
+        line=f.readlines()
+        f.close()
+        for i in line:
+            list1.append(i[i.index(')')+1:-1])
+        qn=input('DO YOU WANT TO SEE HISTORY(y/n)')
+        if qn=='y':
             if len(list1)!=0:
                 sp.call(['gedit','history.txt'])
-            f.close()
-        elif c==13:
-            break
-
-        elif c==8:
-            if 'e**' in str(ex):
-                b=ex
-                c2=str(b).replace('e**','exp(')
-                c2=c2+')'
-                print(c2)
-            else:
-                c2=ex
-            z1=plot(c2,xlim=(-10,10),ylim=(-10,10),ylabel=ex)    
-        elif c==9:
-            if 'e**' in str(a):
-                b=a
-                c2=str(b).replace('e**','exp(')
-                c2=c2+')'
-            else:
-                c2=a
-            plot(c2,ylabel=a,xlim=(-10,10),ylim=(-10,10))
-        elif c in list:
-            q=input('Enter x:')
-            def defined():
-                b=str(ex).replace('x','('+q+')')
-                if 'nan' in str(N(b)) or 'I' in str(N(b)) or str(N(b))=='zoo':
-                    return False
+                qn1=input('Do you want to copy a function from history(y/n)')
+                if qn1=='y':
+                    try:
+                        no=int(input('enter line number'))
+                        func=list1[no-1]
+                    except:
+                        print('Please check the file and enter correct line number')
+                        no=int(input('enter line number'))
+                        func=list1[no-1]
+                elif qn1=='n':
+                    func=input('Enter function')
                 else:
-                    return True
-            def differentiable():
-                b=str(a).replace('x','('+q+')')
-                if 'nan' in str(N(b)) or 'I' in str(N(b)):
-                    return False
-                else:
-                    return True
-            if defined()==False:
-                print('The function is not defined at x=',q)
+                    print('Answer with y/n')
+                    input_handler()
+            else:
+                print('The file is empty')
+                func=input('Enter function')
+        elif qn=='n':
+            func=input('Enter function')
+        else:
+            print('Answer with y/n')
+            input_handler()
+        
+        value = parse_and_differentiate(func)
+        a=simplify(value.pretty())
+        f=open('history.txt','a')
+        if list1.count(func)==0:
+            f.write(str(len(list1)+1)+')'+func+'\n')
+        f.close()
+        list=[2,3,4,5,6,7]
+        while True:
+            c=int(input('Enter choice:'))
+            if c==13:
+                sys.exit()
+            elif c==1:
+                print('DERIVATIVE OF CURVE =dy/dx=',a)
+            elif c==10:
                 input_handler()
-            else:
-                if c==4:
-                    b=str(ex).replace('x','('+q+')')
-                    if str(N(b))=='zoo':
-                        print('The value of the function at x='+q+': infinity/ not defined')
+            elif c==12:
+                print('Think CAREFULLY,you cannot recover your history')
+                qn=input('Are you sure(y/n)')
+                if qn=='y':
+                    f=open('history.txt','w+')
+                elif qn=='n':
+                    print('Your history is safe')
+            elif c==11:
+                if len(list1)!=0:
+                    sp.call(['gedit','history.txt'])
+                f.close()
+
+            elif c==8:
+                z1=plot(str(ex),xlim=(-10,10),ylim=(-10,10),ylabel=ex)
+            elif c==9:
+                plot(a,ylabel=a,xlim=(-10,10),ylim=(-10,10))
+            elif c in list:
+                q=input('Enter x:')
+                def defined():
+                    c3=str(ex).replace('exp','e**')
+                    c3=c3.replace('x','('+q+')')
+                    c3=c3.replace('e**','exp')
+                    if 'nan' in str(N(c3)) or 'I' in str(N(c3)) or str(N(c3))=='zoo':
+                        return False
                     else:
-                        print('The value of the function at x='+q+' :',N(b))
-                if c==5:
-                    if defined()==False:
-                        if limit(ex,x,int(q),'+')==limit(ex,x,int(q),'-'):
-                            print('limit of the function at x='+q+':',limit(ex,x,int(q)))
+                        return True
+                def differentiable():
+                    c2=str(a).replace('exp','e**')
+                    c2=c2.replace('x','('+q+')')
+                    c2=c2.replace('e**','exp')
+                    if 'nan' in str(N(c2)) or 'I' in str(N(c2)):
+                        return False
+                    else:
+                        return True
+                if defined()==False:
+                    print('The function is not defined at x=',q)
+                    input_handler()
+                else:
+                    if c==4:
+                        c3=str(ex).replace('exp','e**')
+                        c3=c3.replace('x','('+q+')')
+                        c3=c3.replace('e**','exp')
+                        if str(N(c3))=='zoo':
+                            print('The value of the function at x='+q+': infinity/ not defined')
                         else:
-                            print('limit does not exist')
-                    else:
-                        print('The limit of the function at x='+q+':',limit(ex,x,int(q)))
-                if c in [2,3,7,6]:
-                    if differentiable()==False:
-                        print('The function is not differentiable at x=',q)
-                        input_handler()
-                    else:
-                        if c==2:
-                            b=str(a).replace('x','('+q+')')
-                            if str(N(b))=='zoo':
-                                print('The slope of the tangent at x='+q+': infinity')
+                            print('The value of the function at x='+q+' :',N(c3))
+                    if c==5:
+                        if defined()==False:
+                            if limit(ex,x,int(q),'+')==limit(ex,x,int(q),'-'):
+                                print('limit of the function at x='+q+':',limit(ex,x,int(q)))
                             else:
-                                print('The slope of the tangent at x='+q+' :',N(b))
-                        if c==3:
-                            b=str(a).replace('x','('+q+')')
-                            if N(b)==0:
-                                print('The slope of the normal at x='+q+': infinity')
-                            else:
-                                print('The slope of the normal at x='+q+' :',-1/N(b))
-                        if c==6:
-                            if defined()==False:
-                                print('Tangent does not exist')
-                            else:
-                                print('Equation of tangent at x='+q+' is')
-                                m=N(str(a).replace('x','('+q+')'))
-                                y=N(str(ex).replace('x','('+q+')'))
-                                if m is zoo:
-                                    c=q
-                                    eq='x='+q
+                                print('limit does not exist')
+                        else:
+                            print('The limit of the function at x='+q+':',limit(ex,x,int(q)))
+                    if c in [2,3,7,6]:
+                        if differentiable()==False:
+                            print('The function is not differentiable at x=',q)
+                            input_handler()
+                        else:
+                            if c==2:
+                                c2=str(a).replace('exp','e**')
+                                c2=c2.replace('x','('+q+')')
+                                c2=c2.replace('e**','exp')
+                                if str(N(c2))=='zoo':
+                                    print('The slope of the tangent at x='+q+': infinity')
                                 else:
-                                    c=N(y-(m*N(q)))
-                                    m=Fraction(float(m))
-                                    c=round(c,2)
+                                    print('The slope of the tangent at x='+q+' :',N(c2))
+                            if c==3:
+                                c2=str(a).replace('exp','e**')
+                                c2=c2.replace('x','('+q+')')
+                                c2=c2.replace('e**','exp')
+                                if N(c2)==0:
+                                    print('The slope of the normal at x='+q+': infinity')
+                                else:
+                                    print('The slope of the normal at x='+q+' :',-1/N(c2))
+                            if c==6:
+                                if defined()==False:
+                                    print('Tangent does not exist')
+                                else:
+                                    print('Equation of tangent at x='+q+' is')
+                                    c2=str(a).replace('exp','e**')
+                                    c2=c2.replace('x','('+q+')')
+                                    c2=c2.replace('e**','exp')
+                                    c3=str(ex).replace('exp','e**')
+                                    c3=c3.replace('x','('+q+')')
+                                    c3=c3.replace('e**','exp')
+                                    m=N(c2)
+                                    y=N(c3)
+                                    if m is zoo:
+                                        c=q
+                                        eq='x='+q
+                                    else:
+                                        c=N(y-(m*N(q)))
+                                        c=round(c,2)
+                                        m=round(m,3)
+                                        if m==1:
+                                            if c==0:
+                                                eq='y=x'
+                                            elif c>0:
+                                                eq='y=x'+'+'+str(c)
+                                            else:
+                                                eq='y=x'+str(c)
+
+                                        elif m==-1:
+                                            if c==0:
+                                                eq='y=-x'
+                                            elif c>0:
+                                                eq='y=-x'+'+'+str(c)
+                                            else:
+                                                eq='y=-x'+str(c)
+                                        elif m==0:
+                                            if c==0:
+                                                eq='y='+str(c)
+                                            elif c>0:
+                                                eq='y=+'+str(c)
+                                            else:
+                                                eq='y='+str(c)     
+                                        else:
+                                            if c==0:
+                                                eq='y='+str(m)+'*x'
+                                            elif c>0:
+                                                eq='y='+str(m)+'*x'+'+'+str(c)
+                                            else:
+                                                eq='y='+str(m)+'*x'+str(c)
+                                    print(eq)
+                                    if str(eq)[0]=='x':
+                                        z1=plot_implicit(Eq(x,float(str(eq)[2::])),show=False,line_color='red',ylim=(-10,10),legend=True)
+                                    else:
+                                        z1=plot(str(eq)[2::],show=False,line_color='red',ylim=(-10,10),legend=True)
+                                    z2=plot(ex,xlim=(-10,10),ylim=(-10,10),ylabel=ex,show=False,legend=True)  
+                                    z1.extend(z2)
+                                    z1.show()
+                            if c==7:
+                                if defined()==False:
+                                    print('Normal does not exist')
+                                else:
+                                    print('Equation of normal at x='+q+' is')
+                                    c2=str(a).replace('exp','e**')
+                                    c2=c2.replace('x','('+q+')')
+                                    c2=c2.replace('e**','exp')
+                                    c3=str(ex).replace('exp','e**')
+                                    c3=c3.replace('x','('+q+')')
+                                    c3=c3.replace('e**','exp')
+                                    m=N(c2)
+                                    y=N(c3)
+                                    if m==0 or m is zoo:
+                                        pass
+                                    else:
+                                        m=Fraction(-1,Fraction(float(m)))
+                                        m=round(m,3)
+                                        c=N(y-(m*N(q)))
+                                        c=round(c,2)
                                     if m==1:
                                         if c==0:
                                             eq='y=x'
@@ -702,79 +773,26 @@ def input_handler():
                                         else:
                                             eq='y=x'+str(c)
 
-                                    elif m==-1:
-                                        if c==0:
-                                            eq='y=-x'
-                                        elif c>0:
-                                            eq='y=-x'+'+'+str(c)
-                                        else:
-                                            eq='y=-x'+str(c)
-                                    elif m==0:
-                                        if c==0:
-                                            eq='y='+str(c)
-                                        elif c>0:
-                                            eq='y=+'+str(c)
-                                        else:
-                                            eq='y='+str(c)     
+                                    if m==0:
+                                        eq='x='+q
+                                    if m is zoo:
+                                        eq='y='+str(y)
                                     else:
                                         if c==0:
-                                            eq='y='+str(m)+'*x'
+                                            eq='y=('+str(m)+')*x'
                                         elif c>0:
-                                            eq='y='+str(m)+'*x'+'+'+str(c)
+                                            eq='y=('+str(m)+')*x'+'+'+str(c)
                                         else:
-                                            eq='y='+str(m)+'*x'+str(c)
+                                            eq='y=('+str(m)+')*x'+str(c)
                                 print(eq)
-                                z1=plot(str(eq)[2::],show=False,line_color='red',ylim=(-10,10),legend=True)
-                                if 'e**' in str(ex):
-                                    b=ex
-                                    c2=str(b).replace('e**','exp(')
-                                    c2=c2+')'
+                                if str(eq)[0]=='x':
+                                    z1=plot_implicit(Eq(x,float(str(eq)[2::])),show=False,line_color='red',ylim=(-10,10),legend=True)
                                 else:
-                                    c2=ex
-                                z2=plot(c2,xlim=(-10,10),ylim=(-10,10),ylabel=ex,show=False,legend=True)  
+                                    z1=plot(str(eq)[2::],show=False,line_color='red',ylim=(-10,10),legend=True)
+                                z2=plot(ex,xlim=(-10,10),ylim=(-10,10),ylabel=ex,show=False,legend=True)  
                                 z1.extend(z2)
                                 z1.show()
-                                
-                        if c==7:
-                            if defined()==False:
-                                print('Normal does not exist')
-                            else:
-                                print('Equation of normal at x='+q+' is')
-                                m=N(str(a).replace('x','('+q+')'))
-                                if m==0 or m is zoo:
-                                    pass
-                                else:
-                                    m=Fraction(-1,Fraction(float(m)))
-                                    y=N(str(ex).replace('x','('+q+')'))
-                                    c=N(y-(m*N(q)))
-                                    c=round(c,2)
-                                if m==1:
-                                    if c==0:
-                                        eq='y=x'
-                                    elif c>0:
-                                        eq='y=x'+'+'+str(c)
-                                    else:
-                                        eq='y=x'+str(c)
-
-                                if m==0:
-                                    c=N(str(ex).replace('x','('+q+')'))
-                                    eq='x='+str(round(c,2))
-                                else:
-                                    if c==0:
-                                        eq='y=('+str(m)+')*x'
-                                    elif c>0:
-                                        eq='y=('+str(m)+')*x'+'+'+str(c)
-                                    else:
-                                        eq='y=('+str(m)+')*x'+str(c)
-                            print(eq)
-                            z1=plot(str(eq)[2::],show=False,line_color='red',ylim=(-10,10),legend=True)
-                            if 'e**' in str(ex):
-                                b=ex
-                                c2=str(b).replace('e**','exp(')
-                                c2=c2+')'
-                            else:
-                                c2=ex
-                            z2=plot(c2,xlim=(-10,10),ylim=(-10,10),ylabel=ex,show=False,legend=True)  
-                            z1.extend(z2)
-                            z1.show()
+    except:
+        print('Please give brackets to every constant term and variable seperately and make sure to use only two terms with an operator with brackets to avoid errors')
+        input_handler()
 input_handler()
