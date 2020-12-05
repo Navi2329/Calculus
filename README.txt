@@ -39,7 +39,11 @@ Python Code to find derivative of a function
 ******Decorations to code to be done******
 #03/12/20 and 04/12/20
 *removable discontinuity was added using limits(03/12/20)
-*the above was removed as it was useless(04/12/20)
 *A choice to calculate limit of a function was added(04/12/20)
-******Decorations are not going to be done*******
-
+#06/12/20
+*Issue regarding Applications regarding exponential function was fixed
+*imported new module of sympy named plot_explicit to plot vertical tangents
+*Imported sys library to tackle break issue when running nested loop(sys.exit())
+*Reduced the number of lines by a minimum of 20 lines
+*Possibility of final release
+*****************************************************
