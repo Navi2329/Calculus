@@ -650,7 +650,7 @@ def input_handler():
                 if defined()==False:
                     print('The function is not defined at x=',q)
                     if ch==5:
-                        if limit(ex,x,q,'+')==limit(ex,x,q,'-') and limit(ex,x,q) is not zoo:
+                        if limit(str(func),x,q,'+')==limit(str(func),x,q,'-') and limit(str(func),x,q) is not zoo:
                             print('limit of the function at x='+q+' is:',limit(ex,x,q))
                         else:
                             print('Limit does not exist')
@@ -671,9 +671,7 @@ def input_handler():
                             else:
                                 print('The value of the function at x='+q+' is',simplify(c3),'=',N(c4))
                     if ch==5:
-                        c3=str(ex).replace('exp','e**')
-                        c3=c3.replace('x','('+q+')')
-                        print('Limit of the function at x='+q+' is:',N(c3))
+                        print('Limit of the function at x='+q+' is:',limit(str(func),x,q))
                     elif ch in [2,3,7,6]:
                         if differentiable()==False:
                             print('The function is not differentiable at x=',q)
