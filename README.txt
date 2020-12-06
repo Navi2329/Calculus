@@ -41,9 +41,14 @@ Python Code to find derivative of a function
 *removable discontinuity was added using limits(03/12/20)
 *A choice to calculate limit of a function was added(04/12/20)
 #06/12/20
-*Issue regarding Applications regarding exponential function was fixed
-*imported new module of sympy named plot_explicit to plot vertical tangents
-*Imported sys library to tackle break issue when running nested loop(sys.exit())
+*Issue regarding Applications regarding exponential function was fixed.
+*imported new module of sympy named plot_explicit to plot vertical tangents.
+*Imported sys library to tackle break issue when running nested loop(sys.exit()).
+*Imported warnings library to skip warnings given by sympy.
+*Changed the code so that the while loop will ask for choice and not to start input_handler() from beginning when the entered function is not defined/differentiable at a point.
+*Some errors in equation of tangents and normals when the code misinterprets variable 'c' as choice instead of the calculated constant value of the equation.
+*Errors when calculating limits at x values (when expressed as pi) were fixed
+*Some limits if inverse trignometric functions were giving errors(!!!!!!!!!!!!)
 *History.txt was uploaded to check list of already typed functions
 *Reduced the number of lines by a minimum of 20 lines
 *Possibility of final release
