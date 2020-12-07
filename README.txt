@@ -51,5 +51,6 @@ Python Code to find derivative of a function
 *Some limits if inverse trignometric functions were giving errors(!!!!!!!!!!!!)
 *History.txt was uploaded to check list of already typed functions
 *Reduced the number of lines by a minimum of 20 lines
-*Possibility of final release
+#07/12/20
+*Added 2 choices to check continuity and differentiability
 *****************************************************
