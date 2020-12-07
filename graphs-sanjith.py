@@ -650,8 +650,9 @@ def input_handler():
                 if defined()==False:
                     print('The function is not defined at x=',q)
                     if ch==5:
+                        func=str(func).replace('e','exp')
                         if limit(str(func),x,q,'+')==limit(str(func),x,q,'-') and limit(str(func),x,q) is not zoo:
-                            print('limit of the function at x='+q+' is:',limit(ex,x,q))
+                            print('limit of the function at x='+q+' is:',limit(func,x,q))
                         else:
                             print('Limit does not exist')
                     if ch==6:
@@ -671,6 +672,7 @@ def input_handler():
                             else:
                                 print('The value of the function at x='+q+' is',simplify(c3),'=',N(c4))
                     if ch==5:
+                        func=str(func).replace('e','exp')
                         print('Limit of the function at x='+q+' is:',limit(str(func),x,q))
                     elif ch in [2,3,7,6]:
                         if differentiable()==False:
@@ -746,7 +748,7 @@ def input_handler():
                                     z1=plot_implicit(Eq(x,float(str(eq)[2::])),show=False,line_color='red',ylim=(-10,10),legend=True)
                                 else:
                                     z1=plot(str(eq)[2::],show=False,line_color='red',ylim=(-10,10),legend=True)
-                                z2=plot(ex,xlim=(-10,10),ylim=(-10,10),ylabel=ex,show=False,legend=True)  
+                                z2=plot(str(ex),xlim=(-10,10),ylim=(-10,10),ylabel=ex,show=False,legend=True)  
                                 z1.extend(z2)
                                 z1.show()
                             if ch==7:
@@ -789,7 +791,7 @@ def input_handler():
                                     z1=plot_implicit(Eq(x,float(str(eq)[2::])),show=False,line_color='red',ylim=(-10,10),legend=True)
                                 else:
                                     z1=plot(str(eq)[2::],show=False,line_color='red',ylim=(-10,10),legend=True)
-                                z2=plot(ex,xlim=(-10,10),ylim=(-10,10),ylabel=ex,show=False,legend=True)  
+                                z2=plot(str(ex),xlim=(-10,10),ylim=(-10,10),ylabel=ex,show=False,legend=True)  
                                 z1.extend(z2)
                                 z1.show()
     except:
