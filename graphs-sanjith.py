@@ -33,18 +33,20 @@ print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
 print("Instructions: ")
 print('Please give brackets to every constant term and variable seperately and make sure to use only two terms with an operator with brackets to avoid errors')
 print('1)To find DERIVATIVE or dy/dx')
-print('2)To find slope of tangent to the curve at a point or dy/dx|x=a')
-print('3)To find slope of normal to the curve at a point or -dx/dy|x=a')
-print('4)To find value of the function at a point or f(a) or y|x=a')
-print('5)To find limit of function at a point')
-print('6)To find equation of tangent at a point on curve')
-print('7)To find equation of normal at a point on curve')
-print('8)Graph of function')
-print('9)Graph of derivative')
-print('10)To enter another function')
-print('11)See History')
-print('12)Clear History')
-print('13)EXIT')
+print('2)To check if a function is continuous at a point')
+print('3)To check if the function is differentiable at a point')
+print('4)To find slope of tangent to the curve at a point or dy/dx|x=a')
+print('5)To find slope of normal to the curve at a point or -dx/dy|x=a')
+print('6)To find value of the function at a point or f(a) or y|x=a')
+print('7)To find limit of function at a point')
+print('8)To find equation of tangent at a point on curve')
+print('9)To find equation of normal at a point on curve')
+print('10)Graph of function')
+print('11)Graph of derivative')
+print('12)To enter another function')
+print('13)See History')
+print('14)Clear History')
+print('15)EXIT')
 def match_for_binary_exp(expr, klass, op):
     atom_expr = None
     expr_length = 0
@@ -604,30 +606,30 @@ def input_handler():
         if list1.count(func)==0:
             f.write(str(len(list1)+1)+')'+func+'\n')
         f.close()
-        list=[2,3,4,5,6,7]
+        list=[2,3,4,5,6,7,8,9]
         while True:
             ch=int(input('Enter choice:'))
-            if ch==13:
+            if ch==15:
                 sys.exit()
             elif ch==1:
                 print('DERIVATIVE OF CURVE =dy/dx=',a)
-            elif ch==10:
-                input_handler()
             elif ch==12:
+                input_handler()
+            elif ch==14:
                 print('Think CAREFULLY,you cannot recover your history')
                 qn=input('Are you sure(y/n)')
                 if qn=='y':
                     f=open('history.txt','w+')
                 elif qn=='n':
                     print('Your history is safe')
-            elif ch==11:
+            elif ch==13:
                 if len(list1)!=0:
                     os.startfile('history.txt')
                 f.close()
 
-            elif ch==8:
+            elif ch==10:
                 z1=plot(str(ex),xlim=(-10,10),ylim=(-10,10),ylabel=ex)
-            elif ch==9:
+            elif ch==11:
                 plot(a,ylabel=a,xlim=(-10,10),ylim=(-10,10))
             elif ch in list:
                 q=input('Enter x:')
@@ -649,18 +651,22 @@ def input_handler():
                         return True
                 if defined()==False:
                     print('The function is not defined at x=',q)
-                    if ch==5:
+                    if ch==7:
                         func=str(func).replace('e','exp')
                         if limit(str(func),x,q,'+')==limit(str(func),x,q,'-') and limit(str(func),x,q) is not zoo:
                             print('limit of the function at x='+q+' is:',limit(func,x,q))
                         else:
                             print('Limit does not exist')
-                    if ch==6:
+                    if ch==8:
                         print('So,Tangent does not exist at x='+q)
-                    if ch==7:
+                    if ch==9:
                         print('So,Normal does not exist at x='+q)
+                    if ch==2:
+                        print('The function is not continous at x=',q)
+                    if ch==3:
+                        print('The function is not differentiable at x=',q)
                 else:
-                    if ch==4:
+                    if ch==6:
                         c3=str(ex).replace('exp','e**')
                         c3=c3.replace('x','('+q+')')
                         c4=c3.replace('e**','exp')
@@ -671,14 +677,24 @@ def input_handler():
                                print('The value of the function at x='+q+':',N(c4))
                             else:
                                 print('The value of the function at x='+q+' is',simplify(c3),'=',N(c4))
-                    if ch==5:
+                    if ch==7:
                         func=str(func).replace('e','exp')
                         print('Limit of the function at x='+q+' is:',limit(str(func),x,q))
-                    elif ch in [2,3,7,6]:
+                    elif ch in [2,3,4,5,8,9]:
                         if differentiable()==False:
                             print('The function is not differentiable at x=',q)
+                        if ch==2:
+                            if differentiable()==False:
+                                print('The function is not continous at x=',q)
+                            else:
+                                print('The function is continous at x=',q)
+                        if ch==3:
+                            if differentiable()==False:
+                                print('The function is not differentiable at x=',q)
+                            else:
+                                print('The function is differentiable at x=',q)
                         else:
-                            if ch==2:
+                            if ch==4:
                                 c2=str(a).replace('exp','e**')
                                 c2=c2.replace('x','('+q+')')
                                 c1=c2.replace('e**','exp')
@@ -688,8 +704,8 @@ def input_handler():
                                     if simplify(c2)==N(c1):   
                                         print('The slope of the tangent at x='+q+' :',N(c2))
                                     else:
-                                        print('The slope of the tangent at x='+q+' is',simplify(c2),'=',N(c3))
-                            if ch==3:
+                                        print('The slope of the tangent at x='+q+' is',simplify(c2),'=',N(c2))
+                            if ch==5:
                                 c2=str(a).replace('exp','e**')
                                 c2=c2.replace('x','('+q+')')
                                 c2=c2.replace('e**','exp')
@@ -697,7 +713,7 @@ def input_handler():
                                     print('The slope of the normal at x='+q+': infinity')
                                 else:
                                     print('The slope of the normal at x='+q+' :',-1/N(c2))
-                            if ch==6:
+                            if ch==8:
                                 print('Equation of tangent at x='+q+' is')
                                 c2=str(a).replace('exp','e**')
                                 c2=c2.replace('x','('+q+')')
@@ -751,7 +767,7 @@ def input_handler():
                                 z2=plot(str(ex),xlim=(-10,10),ylim=(-10,10),ylabel=ex,show=False,legend=True)  
                                 z1.extend(z2)
                                 z1.show()
-                            if ch==7:
+                            if ch==9:
                                 print('Equation of normal at x='+q+' is')
                                 c2=str(a).replace('exp','e**')
                                 c2=c2.replace('x','('+q+')')
