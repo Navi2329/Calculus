@@ -9,7 +9,6 @@ print(
     "Fundamental theorem of Calculus or Leibniz rule is differentiating an definite integral : d/dx ʃ(g(x) to h(x)) f(t)dt which is again out of scope")
 print("Some general formulae are given below for your reference:")
 from prettytable import PrettyTable
-
 table = PrettyTable()
 table.field_names = ["Function y=f(x)", "Derivative dy/dx=f'(x)", "#", "Function y=g(x)", "Derivative dy/dx=g'(x)"]
 table.add_row(["x**n", "n*x**(n-1)", "#", "K,where K is a constant", 0])
